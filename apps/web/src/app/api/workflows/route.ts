@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "../../../lib/supabase";
-import { workflowsInsertSchema } from "../../../../schemas";
+import { workflowsInsertSchema } from "../../../../database.schemas";
 import { inngest } from "../../../lib/inngest";
 
 export async function POST(req: NextRequest) {
