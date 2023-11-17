@@ -4,9 +4,13 @@ type InngestEvent =
   | {
       name: "app/tokens.received";
       data: {
-        tokenAmount: number;
-        tokenAddress: string;
-        address: string;
+        fromAddress: string;
+        toAddress: string;
+        token: {
+          amount: number;
+          address: string;
+          name: string;
+        };
       };
     }
   | {
