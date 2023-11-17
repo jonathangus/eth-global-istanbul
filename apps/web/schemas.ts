@@ -14,3 +14,12 @@ export const stepConfigSchema = z.union([
     bar: z.string(),
   }),
 ]);
+
+export const workflowTriggerSchema = z.object({
+  type: z.literal(TRIGGER_TYPE.TOKENS_RECEIVED),
+  token: z.object({
+    name: z.string(),
+    address: z.string().transform((str) => str.toLowerCase()),
+    amount: z.number().optional(),
+  }),
+});
