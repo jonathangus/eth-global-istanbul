@@ -38,7 +38,7 @@ import {
 } from 'viem/accounts';
 import { lineaTestnet } from 'viem/chains';
 import { BUNDLER_CLIENT, PAYMASTER_CLIENT, PUBLIC_CLIENT } from '../clients-ts';
-import { PAYMASTER_CONTRACTS } from '../config';
+import { ENTRY_POINT_ADDRESSES, PAYMASTER_CONTRACTS } from '../config';
 
 interface PermissionlessContext {}
 
@@ -49,6 +49,8 @@ const bundlerClient = BUNDLER_CLIENT[lineaTestnet.id];
 const paymasterClient = PAYMASTER_CLIENT[lineaTestnet.id];
 
 const SIMPLE_ACCOUNT_FACTORY_ADDRESS = PAYMASTER_CONTRACTS[lineaTestnet.id];
+
+const ENTRY_POINT_ADDRESS = ENTRY_POINT_ADDRESSES[lineaTestnet.id];
 
 console.log({ paymasterClient });
 const ownerPrivateKey = generatePrivateKey();
@@ -83,8 +85,6 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
   const value = {};
 
   const test = async () => {
-    const ENTRY_POINT_ADDRESS = '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789';
-
     const senderAddress = await getSenderAddress(publicClient, {
       initCode,
       entryPoint: ENTRY_POINT_ADDRESS,
