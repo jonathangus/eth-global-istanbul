@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { SafeContextProvider } from '../context/safe-context';
+import { PermissionlessContextProvider } from '../context/permissionless-context';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SafeContextProvider>{children}</SafeContextProvider>
+        <PermissionlessContextProvider>
+          <SafeContextProvider>{children}</SafeContextProvider>
+        </PermissionlessContextProvider>
       </body>
     </html>
   );
