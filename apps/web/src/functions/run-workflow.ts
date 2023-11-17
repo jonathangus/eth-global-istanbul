@@ -11,7 +11,7 @@ export const runWorkflow = inngest.createFunction(
       const { error, data } = await supabase
         .from("steps")
         .select()
-        .eq("workflow_id", event.data.workflow.id);
+        .eq("workflow_id", event.data.workflowId);
 
       if (error) {
         console.error("Failed to get workflow steps", error);

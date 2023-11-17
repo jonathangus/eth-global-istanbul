@@ -9,7 +9,7 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
     const workflows = await step.run("Get workflows", async () => {
       const { error, data } = await supabase
         .from("workflows")
-        .select()
+        .select("id")
         .eq("address", event.data.address)
         .eq("trigger:jsonb->>type", TRIGGER_TYPE.TOKENS_RECEIVED)
         .eq("trigger:jsonb->>tokenAddress", event.data.tokenAddress)
@@ -29,8 +29,8 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
 
     const events = workflows.map((workflow) => {
       return {
-        name: "app/workflow.triggered",
-        data: { workflow },
+        name: "app/workflow.triggered" as const,
+        data: { workflowId: workflow.id },
       };
     });
 
