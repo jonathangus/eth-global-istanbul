@@ -52,4 +52,4 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
   );
 }
 
-const useAA = useContext(permissionlessContext);
+export const useAA = () => useContext(permissionlessContext);
