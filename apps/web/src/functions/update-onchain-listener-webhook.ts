@@ -1,8 +1,8 @@
 import { alchemyBase } from "../lib/alchemy";
 import { inngest } from "../lib/inngest";
 
-export const helloWorld = inngest.createFunction(
-  { id: "create-onchain-listener" },
+export const updateOnchainListenerWebhook = inngest.createFunction(
+  { id: "update-onchain-listener-webhook" },
   { event: "app/workflow.created" },
   async ({ event, step }) => {
     await step.run("Create Listener", async () => {
