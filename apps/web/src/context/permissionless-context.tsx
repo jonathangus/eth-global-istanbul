@@ -165,27 +165,27 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
 
     console.log('___senderAddress', ___senderAddress);
 
-    // console.log(
-    //   JSON.stringify({
-    //     to,
-    //     data,
-    //     callData,
-    //     initCode,
-    //     sender: senderAddress,
-    //     signature,
-    //     nonce: Number(userOperation.nonce),
-    //   }),
-    //   {
-    //     to,
-    //     data,
-    //     callData,
-    //     initCode,
-    //     sender: senderAddress,
-    //     signature,
-    //     nonce: Number(userOperation.nonce),
-    //   }
-    // );
+    await navigator.clipboard.writeText(
+      JSON.stringify({
+        preVerificationGas: Number(
+          sponsorUserOperationResult.preVerificationGas
+        ),
+        verificationGasLimit: Number(
+          sponsorUserOperationResult.verificationGasLimit
+        ),
+        callGasLimit: Number(sponsorUserOperationResult.callGasLimit),
+        paymasterAndData: sponsorUserOperationResult.paymasterAndData,
+        to,
+        data,
+        callData,
+        initCode,
+        sender: senderAddress,
+        signature,
+        nonce: Number(userOperation.nonce),
+      })
+    );
 
+    return;
     console.log('Generated signature:', signature);
 
     console.log(sponsoredUserOperation);
