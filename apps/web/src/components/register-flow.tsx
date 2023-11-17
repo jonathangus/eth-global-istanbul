@@ -1,3 +1,12 @@
+'use client';
+import { useSafeContext } from '../context/safe-context';
+
 export function RegisterFlow() {
-  return <div />;
+  const { register } = useSafeContext();
+
+  return (
+    <div>
+      <button onClick={() => register()}>asd</button>
+    </div>
+  );
 }
