@@ -9,11 +9,12 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
     const workflows = await step.run("Get workflows", async () => {
       const { error, data } = await supabase
         .from("workflows")
-        .select("id")
-        .eq("address", event.data.address)
-        .eq("trigger:jsonb->>type", TRIGGER_TYPE.TOKENS_RECEIVED)
-        .eq("trigger:jsonb->>tokenAddress", event.data.tokenAddress)
-        .gte("trigger:jsonb->>tokenAmount", event.data.tokenAmount);
+        .select()
+        .eq("address", event.data.toAddress)
+        .contains("trigger", {
+          type: TRIGGER_TYPE.TOKENS_RECEIVED,
+          tokenAddress: event.data.token.address,
+        });
 
       if (error) {
         console.error("Failed to get workflows", error);
@@ -24,7 +25,11 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
         return [];
       }
 
-      return data;
+      return data.filter(
+        (workflow) =>
+          Number((workflow.trigger as any).tokenAmount) >=
+          event.data.token.amount
+      );
     });
 
     const events = workflows.map((workflow) => {
@@ -34,6 +39,10 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
       };
     });
 
-    await step.sendEvent("fan-out-workflows-runs", events);
+    if (events.length > 0) {
+      await step.sendEvent("fan-out-workflows-runs", events);
+    }
+
+    return { count: events.length };
   }
 );
