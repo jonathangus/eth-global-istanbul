@@ -1,80 +1,99 @@
 "use client"
 
 import React, { useState } from "react"
-import { FlowItem } from "./flow-item"
+import { TriggerItem } from "./trigger-item"
+import { ActionItem } from "./action-item"
+
+const Initialtrigger = {
+  id: "trigger-1",
+  type: "tokenReceived",
+  content: "on tokens received",
+  address: "",
+  amount: 0,
+}
+
+const InitialStep = {
+  id: "step-1",
+  type: "type1",
+  content: "step 1",
+}
+
+export type Trigger = {
+  id: string
+  type: string
+  content: string
+  address: string
+  amount: number
+}
+
+export type Step = {
+  id: string
+  type: string
+  content: string
+}
 
 export function FlowBuilder() {
-  const [children, setChildren] = useState<React.ReactNode[]>([])
-  const [showModal, setShowModal] = useState(false)
-  const [childType, setChildType] = useState("")
+  const [trigger, setTrigger] = useState<Trigger | null>(null)
+  const [steps, setSteps] = useState<Step[]>([])
+
+  const addTrigger = (newTrigger: Trigger) => {
+    setTrigger(newTrigger)
+  }
+
+  const addStep = (newStep: Step) => {
+    setSteps([...steps, newStep])
+  }
+
+  const onRemoveStep = (stepToRemove: Step) => {
+    setSteps(steps.filter((step) => step.id !== stepToRemove.id))
+  }
 
   const addChild = () => {
-    const newChild = (
-      <FlowItem
-        key={children.length}
-        type={childType}
-        content={`Child ${children.length + 1}`}
-      />
-    )
-    setChildren([...children, newChild])
-    setShowModal(false)
+    if (!trigger) {
+      addTrigger(Initialtrigger)
+    } else {
+      addStep(InitialStep)
+    }
+  }
+
+  const deployFlow = async () => {
+    console.log("deploy flow")
+    await fetch("api/workflows", {
+      method: "POST",
+      body: JSON.stringify({
+        trigger: trigger,
+        steps: steps,
+      }),
+    })
   }
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="flex flex-col items-center">
-        {children}
+    <div className="w-full h-full flex justify-center">
+      <div className="flex flex-col items-center gap-4">
+        {trigger !== null && (
+          <TriggerItem
+            trigger={trigger}
+            onRemoveTrigger={() => setTrigger(null)}
+            onChange={(updatedTrigger: Trigger) => setTrigger(updatedTrigger)}
+          />
+        )}
+        {steps.map((step: any) => (
+          <ActionItem key={step.id} step={step} onRemoveStep={onRemoveStep} />
+        ))}
+
         <button
-          onClick={() => setShowModal(true)}
+          onClick={addChild}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
         >
-          Add
+          {trigger ? "Add Action" : "Add Trigger"}
         </button>
-
-        {showModal && (
-          <div className="absolute w-[30vw] h-[30vh] bg-white flex border-2 border-black">
-            <div className="">
-              <h4>Select Child Type</h4>
-              <div className="w-full flex">
-                <button
-                  onClick={() => setChildType("trigger")}
-                  className={`p-4 border-2 ${
-                    childType === "trigger"
-                      ? "bg-blue-500 text-white"
-                      : "bg-white border-black"
-                  }`}
-                >
-                  trigger
-                </button>
-                <button
-                  onClick={() => setChildType("condition")}
-                  className={`p-4 border-2 ${
-                    childType === "condition"
-                      ? "bg-blue-500 text-white"
-                      : "bg-white border-black"
-                  }`}
-                >
-                  condition
-                </button>
-                <button
-                  onClick={() => setChildType("action")}
-                  className={`p-4 border-2 ${
-                    childType === "action"
-                      ? "bg-blue-500 text-white"
-                      : "bg-white border-black"
-                  }`}
-                >
-                  action
-                </button>
-              </div>
-              <button
-                onClick={addChild}
-                className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
-              >
-                Add Child
-              </button>
-            </div>
-          </div>
+        {trigger && steps.length > 0 && (
+          <button
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            onClick={deployFlow}
+          >
+            deploy flow
+          </button>
         )}
       </div>
     </div>
