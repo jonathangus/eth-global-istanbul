@@ -99,33 +99,10 @@ export const getCallData = async (): Promise<Hex> => {
 export const execute = async (
   workflowStep: z.infer<typeof workflowStepSchema>
 ) => {
-  console.log('WORKFLOW:::', workflowStep.tx_sign_data);
-  const result = await executeTransaction(84531, workflowStep.tx_sign_data!);
+  const result = await executeTransaction(
+    workflowStep.action.chainId,
+    workflowStep.tx_sign_data!
+  );
 
   return result;
-};
-
-const buildTransactions = async ({ chain }) => {
-  const { chainId } = chain;
-
-  const broadcastApiUrl =
-    'https://tx-gateway.1inch.io/v1.1/' + chainId + '/broadcast';
-  const apiBaseUrl = 'https://api.1inch.io/v5.0/' + chainId;
-
-  function apiRequestUrl(methodName: string, queryParams: Record<any, any>) {
-    return (
-      apiBaseUrl +
-      methodName +
-      '?' +
-      new URLSearchParams(queryParams).toString()
-    );
-  }
-
-  function checkAllowance(tokenAddress: Address, walletAddress: Address) {
-    return fetch(
-      apiRequestUrl('/approve/allowance', { tokenAddress, walletAddress })
-    )
-      .then((res) => res.json())
-      .then((res) => res.allowance);
-  }
 };
