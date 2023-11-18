@@ -29,7 +29,7 @@ import { usepassKeyContext } from './passkey-context';
 import { abi as simpleAccountABI } from '../abi/simple-account';
 import { abi as accountFactoryABI } from '../abi/account-factory';
 
-import { useChain } from '../app/hooks/use-chain';
+import { useChain } from '../hooks/use-chain';
 import { useMutation } from 'wagmi';
 
 interface PermissionlessContext {}

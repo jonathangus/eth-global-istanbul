@@ -1,53 +1,44 @@
-import { getAccountNonce } from 'permissionless';
-import {
-  UserOperation,
-  bundlerActions,
-  getSenderAddress,
-  getUserOperationHash,
-  waitForUserOperationReceipt,
-  GetUserOperationReceiptReturnType,
-  signUserOperationHashWithECDSA,
-} from 'permissionless';
+import { bundlerActions } from 'permissionless';
 import {
   pimlicoBundlerActions,
   pimlicoPaymasterActions,
 } from 'permissionless/actions/pimlico';
-import { createClient, createPublicClient, http } from 'viem';
-import { lineaTestnet, polygonMumbai } from 'viem/chains';
+import { createClient, createPublicClient, http, Chain } from 'viem';
+import { lineaTestnet, baseGoerli } from 'viem/chains';
 
-const apiKey = process.env.NEXT_PUBLIC_YOUR_PIMLICO_API_KEY; // REPLACE THIS
+const apiKey = process.env.NEXT_PUBLIC_YOUR_PIMLICO_API_KEY;
 
-const lineaTestnetName = 'linea-testnet'; // find the list of chain names on the Pimlico verifying paymaster reference page
+const lineaTestnetName = 'linea-testnet';
 
-const lineaBundlerClient = createClient({
-  transport: http(
-    `https://api.pimlico.io/v1/${lineaTestnetName}/rpc?apikey=${apiKey}`
-  ),
-  chain: lineaTestnet,
-})
-  .extend(bundlerActions)
-  .extend(pimlicoBundlerActions);
+const createBundlerClient = (name: string, chain: Chain) =>
+  createClient({
+    transport: http(`https://api.pimlico.io/v1/${name}/rpc?apikey=${apiKey}`),
+    chain,
+  })
+    .extend(bundlerActions)
+    .extend(pimlicoBundlerActions);
 
 export const BUNDLER_CLIENT = {
-  [lineaTestnet.id]: lineaBundlerClient,
+  [lineaTestnet.id]: createBundlerClient('linea-testnet', lineaTestnet),
+  [baseGoerli.id]: createBundlerClient('base-goerli', lineaTestnet),
 };
 
-const lineaPaymasterClient = createClient({
-  transport: http(
-    `https://api.pimlico.io/v2/${lineaTestnetName}/rpc?apikey=${apiKey}`
-  ),
-  chain: lineaTestnet,
-}).extend(pimlicoPaymasterActions);
+const getPaymasterClient = (name: string, chain: Chain) =>
+  createClient({
+    transport: http(`https://api.pimlico.io/v2/${name}/rpc?apikey=${apiKey}`),
+    chain,
+  }).extend(pimlicoPaymasterActions);
 
 export const PAYMASTER_CLIENT = {
-  [lineaTestnet.id]: lineaPaymasterClient,
+  [lineaTestnet.id]: getPaymasterClient('linea-testnet', lineaTestnet),
 };
 
-const lineaPublicClient = createPublicClient({
-  transport: http('https://rpc.goerli.linea.build/'),
-  chain: lineaTestnet,
-});
+const getPublicClient = (name: string, chain: Chain) =>
+  createPublicClient({
+    transport: http('https://rpc.goerli.linea.build/'),
+    chain: lineaTestnet,
+  });
 
 export const PUBLIC_CLIENT = {
-  [lineaTestnet.id]: lineaPublicClient,
+  [lineaTestnet.id]: getPublicClient('linea-testnet', lineaTestnet),
 };
