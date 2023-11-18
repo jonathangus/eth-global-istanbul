@@ -15,6 +15,7 @@ import { Button } from "../app/components/ui/button"
 import { useAA } from "../context/permissionless-context"
 import { usepassKeyContext } from "../context/passkey-context"
 import { useChain } from "../hooks/use-chain"
+import { Input } from "../app/components/ui/input"
 
 const Initialtrigger = {
   type: "TOKENS_RECEIVED",
@@ -39,14 +40,33 @@ const InitialStep = {
 }
 
 export type Trigger = z.infer<typeof workflowTriggerSchema>
-
 export type Step = z.infer<typeof workflowStepSchema>
 
 let stepIdCounter = 1
 
+const tomatoNames = [
+  "Tommy Tomato",
+  "Cherry Tomato",
+  "Saucy Tomato",
+  "Tomato Tango",
+  "Sweet Tomato",
+]
+
+function getRandomTomatoName(): string {
+  const defaultName = "Default Tomato"
+  if (tomatoNames.length === 0) {
+    return defaultName
+  }
+  const randomIndex = Math.floor(Math.random() * tomatoNames.length)
+  return tomatoNames[randomIndex] || defaultName
+}
+
 export function FlowBuilder() {
   const [trigger, setTrigger] = useState<Trigger | null>(null)
   const [steps, setSteps] = useState<Step[]>([])
+  const [workFlowName, setWorkFlowName] = useState<string>(
+    getRandomTomatoName()
+  )
 
   const addStepButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -81,7 +101,7 @@ export function FlowBuilder() {
     console.log("deploy flow")
     const workflow = await createWorkflow({
       address: account.address,
-      name: "my workflow",
+      name: workFlowName,
       trigger: trigger,
       steps: steps,
     })
@@ -93,6 +113,14 @@ export function FlowBuilder() {
 
   return (
     <div className="flex flex-col items-center">
+      <div className="pt-3 pb-6">
+        <Input
+          value={workFlowName}
+          onChange={(e) => setWorkFlowName(e.target.value)}
+          placeholder="Workflow name"
+          className="text-2xl font-bold border-none text-center"
+        />
+      </div>
       {trigger && (
         <TriggerItem
           trigger={trigger}
