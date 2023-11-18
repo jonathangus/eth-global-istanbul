@@ -6,26 +6,16 @@ import { z } from 'zod';
 export const transformWorkflow = (step: any, chainId: number) => {
   // TODO
   return {
-    type: 'SWAP_ON_1INCH',
+    type: 'MINT_NFT',
     chainId: chainId,
-    fromToken: {
-      address: '0x...',
-    },
-    toToken: {
-      address: '0x...',
-    },
     amount: 10000,
   };
 };
 
-export const getCallData = async ({chainId}): Promise<Hex> => {
-  // const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
-  // const value = 0n;
-  // const data = '0x68656c6c6f';
-
-  const to = '0x82d3270f19CD2629005136089df8aFD96ff248a4'; // AB
+export const getCallData = async ({ chainId, owner }): Promise<Hex> => {
+  const to = 'owner';
   const value = 100000000000000n;
-  const user = '0xa607e9FD075BB4b723b500318565d2Bf5015224F';
+  const user = 'owner';
 
   const callDataMint = encodeFunctionData({
     abi: [
@@ -86,14 +76,13 @@ export const getCallData = async ({chainId}): Promise<Hex> => {
     ],
     args: [to, value, callDataMint],
   });
-  return callData;
 };
 
 export const execute = async (
   workflowStep: z.infer<typeof workflowStepSchema>
 ) => {
   const result = await executeTransaction(
-    workflowStep.action.{chainId},
+    workflowStep.action.chainId,
     workflowStep.tx_sign_data!
   );
 

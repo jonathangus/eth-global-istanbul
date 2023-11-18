@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useMutation } from 'wagmi';
 import { z } from 'zod';
 import { ACTIONS, createWorkflowSchema } from '../../schemas';
-import { actions, transformers } from '../actions';
+import { executions, getCallData, transformers } from '../actions';
 import { useChain } from '../hooks/use-chain';
 import { useRouter } from 'next/navigation';
 
@@ -36,10 +36,9 @@ const buildTx = async ({
   paymasterClient,
   step,
 }: any) => {
-  const action = actions['SWAP_ON_1INCH'];
+  const getCallDataFn = getCallData['SWAP_ON_1INCH'];
 
-  // TODO
-  const callData = await action(step);
+  const callData = await getCallDataFn({ chainId, owner: aaSenderAddress });
 
   const gasPrice = await bundlerClient.getUserOperationGasPrice();
 
@@ -99,13 +98,13 @@ const buildTx = async ({
     chainId,
   };
 
-  const transform = transformers['SWAP_ON_1INCH'];
+  const transformFn = transformers['SWAP_ON_1INCH'];
 
   return {
     tx_sign_data,
     order: 0,
     type: 'SWAP_ON_1INCH',
-    action: transform(step),
+    action: transformFn(step, chainId),
   };
 };
 
@@ -239,6 +238,8 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
 
       txs++;
 
+      const result = await executions['SWAP_ON_1INCH'](tx);
+      console.log(result);
       setCompletedSteps((prev) => [...prev, step.order]);
 
       workflow.steps[i]!.tx_sign_data = tx.tx_sign_data;

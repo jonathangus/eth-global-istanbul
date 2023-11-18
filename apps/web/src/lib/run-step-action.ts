@@ -2,11 +2,6 @@ import { NonRetriableError } from 'inngest';
 import { z } from 'zod';
 import { ACTIONS, workflowStepSchema } from '../../schemas';
 import { executions } from '../actions';
-import {
-  getCallData as OneInchGgtCallData,
-  execute as OneInchExecute,
-  transformWorkflow as OneInchTransformWorkflow,
-} from '../actions/1inch';
 
 export async function runStepAction(
   workflowStep: z.infer<typeof workflowStepSchema>
