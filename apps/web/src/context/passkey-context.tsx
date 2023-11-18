@@ -9,6 +9,10 @@ import { LocalAccount } from 'viem';
 import { useChain } from '../hooks/use-chain';
 import { useMutation } from 'wagmi';
 
+const stampId =
+  process.env.NODE_ENV === 'development'
+    ? 'localhost'
+    : 'eth-global-istanbul-web-s3wv.vercel.app';
 const generateRandomBuffer = (): ArrayBuffer => {
   const arr = new Uint8Array(32);
   crypto.getRandomValues(arr);
@@ -42,7 +46,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
   const [account, setAccount] = useState<LocalAccount | null>();
   const chainName = publicClient.chain.name;
   const stamper = new WebauthnStamper({
-    rpId: 'localhost',
+    rpId: stampId,
   });
 
   useEffect(() => {
@@ -98,7 +102,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     const attestation = await getWebAuthnAttestation({
       publicKey: {
         rp: {
-          id: 'localhost',
+          id: stampId,
           name: 'Turnkey Viem Passkey Demo',
         },
         challenge,
