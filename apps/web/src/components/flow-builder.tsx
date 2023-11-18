@@ -9,7 +9,7 @@ import {
   workflowsInsertSchema,
 } from "../../database.schemas"
 import { TypeOf, z } from "zod"
-import { stepConfigSchema, workflowTriggerSchema } from "../../schemas"
+import { workflowTriggerSchema } from "../../schemas"
 import { randomUUID } from "crypto"
 
 const Initialtrigger = {
@@ -23,8 +23,9 @@ const Initialtrigger = {
 
 const InitialStep = {
   config: {
-    type: "SEND_PUSH_PROTOCOL",
-    foo: "blablba",
+    type: "SEND_PUSH_PROTOCOL_NOTIFICATION",
+    title: "Money!!",
+    message: "You just received money",
   },
   created_at: "",
   id: 1,
@@ -38,7 +39,8 @@ export type Trigger = z.infer<typeof workflowTriggerSchema>
 export type Step = {
   config: {
     type: string
-    foo: string
+    title: string
+    message: string
   }
   created_at?: string
   id: number
@@ -110,6 +112,7 @@ export function FlowBuilder() {
           <>
             <DownArrow />
             <ActionItem
+              trigger={trigger}
               key={step.id}
               step={step}
               onRemoveStep={onRemoveStep}

@@ -7,3 +7,14 @@ body {
   background-image: url("/icons/dot.svg"); /* Path to your SVG file */
   background-repeat: repeat; /* Repeat the background image */
 }
+
+.path {
+  stroke-dasharray: 100;
+  animation: dash 5s linear;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 1000;
+  }
+}

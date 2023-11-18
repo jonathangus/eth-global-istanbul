@@ -7,7 +7,7 @@ export const DownArrow = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M12 16L6 10H18L12 16Z" fill="black" />
+      <path className="path" d="M12 16L6 10H18L12 16Z" fill="black" />
     </svg>
   )
 }
