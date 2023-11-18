@@ -1,21 +1,21 @@
-import { z } from "zod"
+import { z } from "zod";
 import {
   stepsInsertSchema,
   stepsRowSchema,
   workflowsInsertSchema,
-} from "./database.schemas"
+} from "./database.schemas";
 
 export const TRIGGER_TYPE = {
   TOKENS_RECEIVED_ERC20: "TOKENS_RECEIVED_ERC20",
   TOKENS_RECEIVED_ERC721: "TOKENS_RECEIVED_ERC721",
   TOKENS_LEAVE_ERC20: "TOKENS_LEAVE_ERC20",
   TOKENS_LEAVE_ERC721: "TOKENS_LEAVE_ERC721",
-} as const
+} as const;
 
 export const VALID_LOGIC_VALUES = {
   LESS_THAN: "LESS_THAN",
   GREATER_THAN: "GREATER_THAN",
-} as const
+} as const;
 
 export const tokenSchema = z.object({
   name: z.string(),
@@ -24,61 +24,53 @@ export const tokenSchema = z.object({
   logic: z
     .literal(VALID_LOGIC_VALUES.LESS_THAN)
     .or(z.literal(VALID_LOGIC_VALUES.GREATER_THAN)),
-})
+});
 
 export const tokensReceivedERC20TriggerSchema = z.object({
   type: z.literal(TRIGGER_TYPE.TOKENS_RECEIVED_ERC20),
   token: tokenSchema,
-})
+});
 
 export const tokensReceivedERC721TriggerSchema = z.object({
   type: z.literal(TRIGGER_TYPE.TOKENS_RECEIVED_ERC721),
   token: tokenSchema,
-})
+});
 
 export const tokensLeaveERC20TriggerSchema = z.object({
   type: z.literal(TRIGGER_TYPE.TOKENS_LEAVE_ERC20),
   token: tokenSchema,
-})
+});
 
 export const tokensLeaveERC721TriggerSchema = z.object({
   type: z.literal(TRIGGER_TYPE.TOKENS_LEAVE_ERC721),
   token: tokenSchema,
-})
+});
 
 export const workflowTriggerSchema = z.union([
   tokensReceivedERC20TriggerSchema,
   tokensReceivedERC721TriggerSchema,
   tokensLeaveERC20TriggerSchema,
   tokensLeaveERC721TriggerSchema,
-])
+]);
 
 export const ACTIONS = {
-  SEND_PUSH_PROTOCOL_NOTIFICATION: "SEND_PUSH_PROTOCOL_NOTIFICATION",
   SWAP_ON_1INCH: "SWAP_ON_1INCH",
   SEND_ERC_721: "SEND_ERC_721",
   MINT_NFT: "MINT_NFT",
-} as const
+} as const;
 
 export const ERC721SendActionConfigSchema = z.object({
   type: z.literal(ACTIONS.SEND_ERC_721),
   receiver: z.string(),
-})
+});
 
 export const MintNFTActionConfigSchema = z.object({
   type: z.literal(ACTIONS.MINT_NFT),
   address: z.string(),
-})
-
-export const pushProtocolActionConfigSchema = z.object({
-  type: z.literal(ACTIONS.SEND_PUSH_PROTOCOL_NOTIFICATION),
-  title: z.string(),
-  message: z.string(),
-})
+});
 
 export const swapOn1InchConfigSchema = z.object({
   type: z.literal(ACTIONS.SWAP_ON_1INCH),
-  chainId: z.number(),
   fromToken: z.object({
     address: z.string(),
   }),
@@ -87,14 +79,13 @@ export const swapOn1InchConfigSchema = z.object({
   }),
   // TODO: value or percentage
   amount: z.number(),
-})
+});
 
 export const stepActionConfig = z.union([
-  pushProtocolActionConfigSchema,
   swapOn1InchConfigSchema,
   ERC721SendActionConfigSchema,
   MintNFTActionConfigSchema,
-])
+]);
 
 export const stepTxSignDataSchema = z.object({
   preVerificationGas: z.number(),
@@ -108,18 +99,19 @@ export const stepTxSignDataSchema = z.object({
   sender: z.string(),
   signature: z.string(),
   nonce: z.number(),
-})
+  chainId: z.number(),
+});
 
 export const workflowStepSchema = stepsRowSchema.extend({
   tx_sign_data: stepTxSignDataSchema.partial().nullable().optional(),
   action: stepActionConfig,
-})
+});
 
 export const STEP_RUN_STATUS = {
   PENDING: "PENDING",
   RUNNING: "RUNNING",
   COMPLETED: "COMPLETED",
-} as const
+} as const;
 
 export const createWorkflowSchema = workflowsInsertSchema
   .omit({ id: true, created_at: true })
@@ -130,4 +122,4 @@ export const createWorkflowSchema = workflowsInsertSchema
         .extend({ action: stepActionConfig })
     ),
     trigger: workflowTriggerSchema,
-  })
+  });

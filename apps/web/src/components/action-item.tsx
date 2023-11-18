@@ -67,19 +67,6 @@ export const ActionItem = ({
     onRemoveStep(step);
   };
 
-  const tokenOptions = [
-    {
-      value: "SEND_PUSH_PROTOCOL_NOTIFICATION",
-      label: "push notif",
-      image: "/icons/ape.svg",
-    },
-    {
-      value: "SWAP_ONE_INCH",
-      label: "swap 1inch",
-      image: "/icons/1inch-logo.svg",
-    },
-  ];
-
   // if (step.action.type === "SEND_PUSH_PROTOCOL_NOTIFICATION") {
   //   console.log("hello");
   //   render = (
