@@ -10,8 +10,7 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
       const { error, data } = await supabase
         .from("workflows")
         .select()
-        .eq("address", event.data.toAddress.toLowerCase())
-        .eq("trigger->>type", TRIGGER_TYPE.TOKENS_RECEIVED_ERC20);
+        .eq("address", event.data.toAddress.toLowerCase());
 
       if (error) {
         console.error("Failed to get workflows", error);
@@ -25,16 +24,17 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
 
       return data.filter((workflow) => {
         try {
-          const trigger = workflowTriggerSchema.parse(workflow.trigger);
-          const conditions: Array<boolean> = [];
+          // const trigger = workflowTriggerSchema.parse(workflow.trigger);
+          // const conditions: Array<boolean> = [];
 
-          conditions.push(trigger.token.address === event.data.token.address);
+          // conditions.push(trigger.token.address === event.data.token.address);
 
-          if (trigger.token.amount) {
-            conditions.push(trigger.token.amount <= event.data.token.amount);
-          }
+          // if (trigger.token.amount) {
+          //   conditions.push(trigger.token.amount <= event.data.token.amount);
+          // }
 
-          return conditions.every((condition) => condition);
+          // return conditions.every((condition) => condition);
+          return true;
         } catch {
           return false;
         }
