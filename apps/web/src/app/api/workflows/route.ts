@@ -1,29 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '../../../lib/supabase';
-import {
-  stepsInsertSchema,
-  workflowsInsertSchema,
-} from '../../../../database.schemas';
-import { inngest } from '../../../lib/inngest';
-import { z } from 'zod';
-import { stepActionConfig, workflowTriggerSchema } from '../../../../schemas';
+import { NextRequest, NextResponse } from "next/server";
+import { createWorkflowSchema } from "../../../../schemas";
+import { inngest } from "../../../lib/inngest";
+import { supabase } from "../../../lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
-    const values = workflowsInsertSchema
-      .omit({ id: true, created_at: true })
-      .extend({
-        steps: z.array(
-          stepsInsertSchema
-            .omit({ workflow_id: true })
-            .extend({ action: stepActionConfig })
-        ),
-        trigger: workflowTriggerSchema,
-      })
-      .parse(await req.json());
+    const values = createWorkflowSchema.parse(await req.json());
 
     const workflowInsert = await supabase
-      .from('workflows')
+      .from("workflows")
       .insert({
         address: values.address.toLowerCase(),
         name: values.name,
@@ -32,24 +17,24 @@ export async function POST(req: NextRequest) {
       .select();
 
     if (workflowInsert.error) {
-      console.error('Failed to insert workflow', workflowInsert.error);
-      throw new Error('Failed to insert workflow');
+      console.error("Failed to insert workflow", workflowInsert.error);
+      throw new Error("Failed to insert workflow");
     }
 
     if (!workflowInsert.data) {
-      throw new Error('Failed to insert workflow');
+      throw new Error("Failed to insert workflow");
     }
 
     const workflow = workflowInsert.data[0];
 
     if (!workflow) {
-      console.error('Missing workflow id');
-      throw new Error('Failed to insert workflow');
+      console.error("Missing workflow id");
+      throw new Error("Failed to insert workflow");
     }
 
-    console.info('Workflow Created', { workflow });
+    console.info("Workflow Created", { workflow });
 
-    const stepInsert = await supabase.from('steps').insert(
+    const stepInsert = await supabase.from("steps").insert(
       values.steps.map((step) => ({
         type: step.type,
         action: step.action,
@@ -60,20 +45,20 @@ export async function POST(req: NextRequest) {
     );
 
     if (stepInsert.error) {
-      console.error('Failed to insert steps', stepInsert.error);
-      throw new Error('Failed to insert steps');
+      console.error("Failed to insert steps", stepInsert.error);
+      throw new Error("Failed to insert steps");
     }
 
-    console.info('Steps Created', { workflowId: workflow.id });
+    console.info("Steps Created", { workflowId: workflow.id });
 
     const sendEventResponse = await inngest.send({
-      name: 'app/workflow.created',
+      name: "app/workflow.created",
       data: {
         address: values.address,
       },
     });
 
-    console.info('Workflow Created Event Sent', sendEventResponse);
+    console.info("Workflow Created Event Sent", sendEventResponse);
 
     return NextResponse.json(workflow, { status: 201 });
   } catch (e) {

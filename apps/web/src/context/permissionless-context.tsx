@@ -1,20 +1,21 @@
 'use client';
-import type { PropsWithChildren } from 'react';
-import { createContext, useContext, useState } from 'react';
 import {
   UserOperation,
   getSenderAddress,
   signUserOperationHashWithECDSA,
 } from 'permissionless';
-import { Address, concat, encodeFunctionData, Hex } from 'viem';
-import { usepassKeyContext } from './passkey-context';
+import type { PropsWithChildren } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { Address, Hex, concat, encodeFunctionData } from 'viem';
 import { abi as simpleAccountABI } from '../abi/simple-account';
+import { usepassKeyContext } from './passkey-context';
 
-import { useChain } from '../hooks/use-chain';
-import { useMutation } from 'wagmi';
 import axios from 'axios';
-import { actions, executions, transformers } from '../actions';
-import { executeTransaction } from '../lib/execute-transaction';
+import { useMutation } from 'wagmi';
+import { z } from 'zod';
+import { ACTIONS, createWorkflowSchema } from '../../schemas';
+import { actions, transformers } from '../actions';
+import { useChain } from '../hooks/use-chain';
 
 interface PermissionlessContext {}
 
@@ -116,10 +117,10 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     ENTRY_POINT_ADDRESS,
     chainId,
   } = useChain();
-  const [completedSteps, setCompletedSteps] = useState([]);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
-  const { mutate: saveSteps, isLoading: isSaving } = useMutation(
-    async (input) => {
+  const { mutate: createWorkflowMutation, isLoading: isSaving } = useMutation(
+    async (input: z.infer<typeof createWorkflowSchema>) => {
       console.log({ input });
       const res = await axios.post('/api/workflows', JSON.stringify(input));
       return res.data;
@@ -127,11 +128,10 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     { onSuccess: console.log }
   );
 
-  const { mutate: execute, isLoading } = useMutation(async () => _execute(), {
-    onError: console.error,
-  });
   const { account } = usepassKeyContext();
-  const _execute = async () => {
+  const createWorkflow = async (
+    workflow: z.infer<typeof createWorkflowSchema>
+  ) => {
     if (!account) {
       return console.warn('missing logged in');
     }
@@ -198,21 +198,34 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       entryPoint: ENTRY_POINT_ADDRESS,
     });
 
-    const txs = [];
+    let txs = 0;
 
-    const steps = [
-      {
-        order: 0,
-      },
-    ];
-    for (let step in steps) {
+    for (let i = 0; i < workflow.steps.length; i++) {
+      const step = workflow.steps[i];
+
+      if (!step) {
+        continue;
+      }
+
+      if (
+        !([ACTIONS.SWAP_ON_1INCH] as string[]).includes(step?.action.type ?? '')
+      ) {
+        continue;
+      }
+
+      txs++;
+
+      const nextNonce = nonce + BigInt(txs);
+
+      console.log({ nonce, txs, nextNonce });
+
       // TODO CHECK IF TX IS NEEDED
       const tx = await buildTx({
         owner: account,
         chainId,
         entryPoint: ENTRY_POINT_ADDRESS,
         publicClient,
-        nonce: nonce + BigInt(txs.length),
+        nonce: nextNonce,
         accountExist,
         aaSenderAddress,
         bundlerClient,
@@ -220,40 +233,23 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
         initCode,
         step,
       } as any);
-      setCompletedSteps((prev) => [...prev, step.order]);
-      txs.push(tx);
 
-      // console.log('result', );
-      console.log(tx);
+      setCompletedSteps((prev) => [...prev, step.order]);
+
+      workflow.steps[i]!.tx_sign_data = tx;
     }
 
-    const workflowData = {
-      name: 'my flow',
-      address: aaSenderAddress,
-      trigger: {
-        type: 'TOKENS_RECEIVED',
-        token: {
-          name: 'USDC',
-          address: '0xF98AD93Ba3b2e296E0Ca687bee3C6bE2E9ABddC8',
-          amount: 100000,
-        },
-      },
-      steps: txs,
-    };
-
-    saveSteps(workflowData);
+    createWorkflowMutation(workflow);
   };
 
   const value = {
-    isLoading,
+    isSaving,
+    createWorkflow,
     completedSteps,
   };
 
   return (
     <permissionlessContext.Provider value={value}>
-      <div onClick={() => execute()}>make tx</div>
-      {isLoading && <div>loading...</div>}
-      passkey: {account?.address}
       {children}
     </permissionlessContext.Provider>
   );
