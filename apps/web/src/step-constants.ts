@@ -25,9 +25,14 @@ export const STEP_ACTIONS = [
     icon: "/icons/1inch-logo.svg",
   },
   {
-    value: "send-tokens",
+    value: ACTIONS.SEND_ERC_721,
     label: "Send tokens",
     icon: "https://i.imgur.com/kHBwLcW.png",
+  },
+  {
+    value: ACTIONS.MINT_NFT,
+    label: "Mint NFT",
+    icon: "https://cdn-icons-png.flaticon.com/512/6298/6298900.png",
   },
   {
     value: "send-sms",

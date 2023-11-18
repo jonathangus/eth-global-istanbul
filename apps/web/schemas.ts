@@ -1,21 +1,21 @@
-import { z } from 'zod';
+import { z } from "zod";
 import {
   stepsInsertSchema,
   stepsRowSchema,
   workflowsInsertSchema,
-} from './database.schemas';
+} from "./database.schemas";
 
 export const TRIGGER_TYPE = {
-  TOKENS_RECEIVED_ERC20: 'TOKENS_RECEIVED_ERC20',
-  TOKENS_RECEIVED_ERC721: 'TOKENS_RECEIVED_ERC721',
-  UNLIMITED_TOP_UP: 'UNLIMITED_TOP_UP',
-  TOKENS_LEAVE_ERC20: 'TOKENS_LEAVE_ERC20',
-  TOKENS_LEAVE_ERC721: 'TOKENS_LEAVE_ERC721',
+  TOKENS_RECEIVED_ERC20: "TOKENS_RECEIVED_ERC20",
+  TOKENS_RECEIVED_ERC721: "TOKENS_RECEIVED_ERC721",
+  UNLIMITED_TOP_UP: "UNLIMITED_TOP_UP",
+  TOKENS_LEAVE_ERC20: "TOKENS_LEAVE_ERC20",
+  TOKENS_LEAVE_ERC721: "TOKENS_LEAVE_ERC721",
 };
 
 export const VALID_LOGIC_VALUES = {
-  LESS_THAN: 'LESS_THAN',
-  GREATER_THAN: 'GREATER_THAN',
+  LESS_THAN: "LESS_THAN",
+  GREATER_THAN: "GREATER_THAN",
 } as const;
 
 export const tokenSchema = z.object({
@@ -61,10 +61,10 @@ export const workflowTriggerSchema = z.union([
 ]);
 
 export const ACTIONS = {
-  SEND_PUSH_PROTOCOL_NOTIFICATION: 'SEND_PUSH_PROTOCOL_NOTIFICATION',
-  SWAP_ON_1INCH: 'SWAP_ON_1INCH',
-  SEND_ERC_721: 'SEND_ERC_721',
-  MINT_NFT: 'MINT_NFT',
+  SEND_PUSH_PROTOCOL_NOTIFICATION: "SEND_PUSH_PROTOCOL_NOTIFICATION",
+  SWAP_ON_1INCH: "SWAP_ON_1INCH",
+  SEND_ERC_721: "SEND_ERC_721",
+  MINT_NFT: "MINT_NFT",
 } as const;
 
 export const ERC721SendActionConfigSchema = z.object({
@@ -74,6 +74,7 @@ export const ERC721SendActionConfigSchema = z.object({
 
 export const MintNFTActionConfigSchema = z.object({
   type: z.literal(ACTIONS.MINT_NFT),
+  address: z.string(),
 });
 
 export const pushProtocolActionConfigSchema = z.object({
@@ -99,6 +100,7 @@ export const stepActionConfig = z.union([
   pushProtocolActionConfigSchema,
   swapOn1InchConfigSchema,
   ERC721SendActionConfigSchema,
+  MintNFTActionConfigSchema,
 ]);
 
 export const stepTxSignDataSchema = z.object({
@@ -121,9 +123,9 @@ export const workflowStepSchema = stepsRowSchema.extend({
 });
 
 export const STEP_RUN_STATUS = {
-  PENDING: 'PENDING',
-  RUNNING: 'RUNNING',
-  COMPLETED: 'COMPLETED',
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  COMPLETED: "COMPLETED",
 } as const;
 
 export const createWorkflowSchema = workflowsInsertSchema
