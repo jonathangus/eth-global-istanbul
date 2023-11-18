@@ -37,16 +37,16 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
   const { chainId } = useChain();
   const [subOrgId, setSubOrgId] = useState<string | null>(null);
   const [privateKeyId, setPrivateKeyId] = useState<string | null>(null);
-  const [account, setAccount] = useState<LocalAccount>();
+  const [account, setAccount] = useState<LocalAccount | null>();
 
   const stamper = new WebauthnStamper({
     rpId: 'localhost',
   });
 
   useEffect(() => {
+    setAccount(null);
     setSubOrgId(localStorage.getItem(`subOrgId-${chainId}`));
     setPrivateKeyId(localStorage.getItem(`privateKeyId-${chainId}`));
-    setAccount(null);
   }, [chainId]);
 
   const passkeyHttpClient = new TurnkeyClient(

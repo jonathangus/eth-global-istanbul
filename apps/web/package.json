@@ -13,7 +13,6 @@
     "@pushprotocol/restapi": "^1.4.38",
     "@supabase/supabase-js": "^2.38.4",
     "@turnkey/api-key-stamper": "0.1.1",
-    "@turnkey/http": "^2.3.0",
     "@turnkey/viem": "0.2.5",
     "@turnkey/webauthn-stamper": "0.2.0",
     "alchemy-sdk": "^3.0.0",
