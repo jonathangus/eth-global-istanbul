@@ -1,6 +1,9 @@
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ['ui'],
+  transpilePackages: ["ui"],
+  images: {
+    domains: ["i.imgur.com", "files.slack.com"],
+  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if

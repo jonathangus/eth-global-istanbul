@@ -28,6 +28,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../app/components/ui/popover";
+import { STEP_ACTIONS, STEP_CONDITIONS } from "../step-constants";
+import Image from "next/image";
 
 type ActionItemProps = {
   step: Step;
@@ -92,11 +94,6 @@ export const ActionItem = ({
   //   );
   // }
 
-  const STEP_TYPES = [
-    { value: ACTIONS.SWAP_ON_1INCH, label: "Swap on 1inch" },
-    { value: "send-tokens", label: "Send tokens" },
-  ];
-
   return (
     <Card className="w-full">
       <CardHeader>
@@ -108,7 +105,7 @@ export const ActionItem = ({
               className="justify-between"
             >
               {step.action.type
-                ? STEP_TYPES.find(
+                ? STEP_ACTIONS.find(
                     (framework) => framework.value === step.action.type
                   )?.label
                 : "Select..."}
@@ -120,28 +117,51 @@ export const ActionItem = ({
               <CommandInput placeholder="Search..." />
               <CommandEmpty>Nothing found</CommandEmpty>
               <CommandGroup heading="Actions">
-                {STEP_TYPES.map((x) => (
+                {STEP_ACTIONS.map((x) => (
                   <CommandItem
                     key={x.value}
                     value={x.value}
                     onSelect={(currentValue) => {
                       handleDropdownChange(x.value);
                     }}
+                    className={cn(
+                      step.action.type === x.value && "bg-slate-50"
+                    )}
                   >
-                    <CheckIcon
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        step.action.type === x.value
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
+                    <img
+                      width={24}
+                      height={24}
+                      src={x.icon}
+                      alt={x.label}
+                      className="mr-2"
                     />
                     {x.label}
                   </CommandItem>
                 ))}
               </CommandGroup>
-              {/* TOOD: fill in */}
-              <CommandGroup heading="Conditions"></CommandGroup>
+              <CommandGroup heading="Conditions">
+                {STEP_CONDITIONS.map((x) => (
+                  <CommandItem
+                    key={x.value}
+                    value={x.value}
+                    onSelect={(currentValue) => {
+                      handleDropdownChange(x.value);
+                    }}
+                    className={cn(
+                      step.action.type === x.value && "bg-slate-50"
+                    )}
+                  >
+                    <img
+                      width={24}
+                      height={24}
+                      src={x.icon}
+                      alt={x.label}
+                      className="mr-2"
+                    />
+                    {x.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
             </Command>
           </PopoverContent>
         </Popover>
