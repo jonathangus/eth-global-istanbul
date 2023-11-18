@@ -1,37 +1,37 @@
-import { workflowStepSchema, workflowTriggerSchema } from '../../../../schemas';
-import { TopupFlo } from '../../../components/top-up-flow';
-import { WorkflowSteps } from '../../../components/workflow-steps';
-import { supabase } from '../../../lib/supabase';
+import { workflowStepSchema, workflowTriggerSchema } from "../../../../schemas"
+import { TopupFlo } from "../../../components/top-up-flow"
+import { WorkflowSteps } from "../../../components/workflow-steps"
+import { supabase } from "../../../lib/supabase"
 
 const tokenOptions = [
-  { value: 'USDC', label: 'USDC', image: '/icons/USDC.svg', address: '1234' },
-  { value: 'GHO', label: 'GHO', image: '/icons/GHO.svg', address: '54321' },
+  { value: "USDC", label: "USDC", image: "/icons/usdc.svg", address: "1234" },
+  { value: "GHO", label: "GHO", image: "/icons/gho.svg", address: "54321" },
   {
-    value: 'APE',
-    label: 'APE',
-    image: '/icons/APE.svg',
-    address: '783947380',
+    value: "APE",
+    label: "APE",
+    image: "/icons/ape.svg",
+    address: "783947380",
   },
-];
+]
 
 export default async function Page({ params }: { params: { id: string } }) {
   const workflowPromise = supabase
-    .from('workflows')
+    .from("workflows")
     .select()
-    .eq('id', params.id)
-    .maybeSingle();
+    .eq("id", params.id)
+    .maybeSingle()
 
   const stepsPromise = supabase
-    .from('steps')
+    .from("steps")
     .select()
-    .eq('workflow_id', params.id)
-    .order('order', { ascending: true });
+    .eq("workflow_id", params.id)
+    .order("order", { ascending: true })
 
-  const [workflow, steps] = await Promise.all([workflowPromise, stepsPromise]);
+  const [workflow, steps] = await Promise.all([workflowPromise, stepsPromise])
 
-  const trigger = workflowTriggerSchema.parse(workflow.data?.trigger!);
+  const trigger = workflowTriggerSchema.parse(workflow.data?.trigger!)
 
-  const token = tokenOptions.find((t) => t.value === trigger.token.name);
+  const token = tokenOptions.find((t) => t.value === trigger.token.name)
 
   return (
     <div className="max-w-md mx-auto py-4">
@@ -40,9 +40,9 @@ export default async function Page({ params }: { params: { id: string } }) {
         <h1 className="text-3xl">{workflow.data?.name}</h1>
       </div>
       <div className="mb-4">
-        {trigger.type === 'TOKENS_RECEIVED_ERC20' && (
+        {trigger.type === "TOKENS_RECEIVED_ERC20" && (
           <p>
-            Runs when{' '}
+            Runs when{" "}
             <img
               className="inline mr-1 -translate-y-px relative"
               src={token?.image}
@@ -58,5 +58,5 @@ export default async function Page({ params }: { params: { id: string } }) {
         steps={steps.data?.map((s) => workflowStepSchema.parse(s)) ?? []}
       />
     </div>
-  );
+  )
 }

@@ -51,12 +51,12 @@ const dropdownOptions = [
 ]
 
 const tokenOptions = [
-  { value: "USDC", label: "usdc", image: "/icons/USDC.svg", address: "1234" },
-  { value: "GHO", label: "gho", image: "/icons/GHO.svg", address: "54321" },
+  { value: "USDC", label: "usdc", image: "/icons/usdc.svg", address: "1234" },
+  { value: "GHO", label: "gho", image: "/icons/gho.svg", address: "54321" },
   {
     value: "APE",
     label: "ape",
-    image: "/icons/APE.svg",
+    image: "/icons/ape.svg",
     address: "783947380",
   },
 ]

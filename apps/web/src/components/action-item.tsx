@@ -1,22 +1,22 @@
-import { z } from "zod";
+import { z } from "zod"
 import {
   ACTIONS,
   ERC721SendActionConfigSchema,
   MintNFTActionConfigSchema,
   swapOn1InchConfigSchema,
-} from "../../schemas";
-import { Card, CardContent, CardHeader } from "../app/components/ui/card";
-import { Input } from "../app/components/ui/input";
-import { Label } from "../app/components/ui/label";
+} from "../../schemas"
+import { Card, CardContent, CardHeader } from "../app/components/ui/card"
+import { Input } from "../app/components/ui/input"
+import { Label } from "../app/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../app/components/ui/select";
-import { Separator } from "../app/components/ui/separator";
-import { Step, Trigger } from "./flow-builder";
+} from "../app/components/ui/select"
+import { Separator } from "../app/components/ui/separator"
+import { Step, Trigger } from "./flow-builder"
 
 import {
   Command,
@@ -24,25 +24,25 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "../app/components/ui/command";
-import { cn } from "../lib/utils";
-import { Button } from "../app/components/ui/button";
-import { CheckIcon } from "lucide-react";
+} from "../app/components/ui/command"
+import { cn } from "../lib/utils"
+import { Button } from "../app/components/ui/button"
+import { CheckIcon } from "lucide-react"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../app/components/ui/popover";
-import { STEP_ACTIONS, STEP_CONDITIONS } from "../step-constants";
-import Image from "next/image";
-import { Badge } from "../app/components/ui/badge";
+} from "../app/components/ui/popover"
+import { STEP_ACTIONS, STEP_CONDITIONS } from "../step-constants"
+import Image from "next/image"
+import { Badge } from "../app/components/ui/badge"
 
 type ActionItemProps = {
-  step: Step;
-  onChange: (step: Step) => void;
-  onRemoveStep: (step: Step) => void;
-  isSigned?: boolean;
-};
+  step: Step
+  onChange: (step: Step) => void
+  onRemoveStep: (step: Step) => void
+  isSigned?: boolean
+}
 
 export const ActionItem = ({
   step,
@@ -59,15 +59,15 @@ export const ActionItem = ({
           type: newValue,
           address: "0x4ed05dd4b0149deda80ea26683b2ef72820e3e0f",
         },
-      });
+      })
     } else {
-      onChange({ ...step, action: { ...step.action, type: newValue } });
+      onChange({ ...step, action: { ...step.action, type: newValue } })
     }
-  };
+  }
 
   const handleRemoveStep = () => {
-    onRemoveStep(step);
-  };
+    onRemoveStep(step)
+  }
 
   // if (step.action.type === "SEND_PUSH_PROTOCOL_NOTIFICATION") {
   //   console.log("hello");
@@ -99,7 +99,7 @@ export const ActionItem = ({
   //   );
   // }
 
-  const selected = STEP_ACTIONS.find((x) => x.value === step.action.type);
+  const selected = STEP_ACTIONS.find((x) => x.value === step.action.type)
 
   return (
     <Card className="w-full">
@@ -136,7 +136,7 @@ export const ActionItem = ({
                     key={x.value}
                     value={x.value}
                     onSelect={(currentValue) => {
-                      handleDropdownChange(x.value);
+                      handleDropdownChange(x.value)
                     }}
                     className={cn(
                       step.action.type === x.value && "bg-slate-50"
@@ -159,7 +159,7 @@ export const ActionItem = ({
                     key={x.value}
                     value={x.value}
                     onSelect={(currentValue) => {
-                      handleDropdownChange(x.value);
+                      handleDropdownChange(x.value)
                     }}
                     className={cn(
                       step.action.type === x.value && "bg-slate-50"
@@ -231,28 +231,28 @@ export const ActionItem = ({
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 const TOKEN_OPTIONS = [
-  { value: "USDC", label: "usdc", image: "/icons/USDC.svg", address: "1234" },
-  { value: "GHO", label: "gho", image: "/icons/GHO.svg", address: "54321" },
+  { value: "USDC", label: "usdc", image: "/icons/usdc.svg", address: "1234" },
+  { value: "GHO", label: "gho", image: "/icons/gho.svg", address: "54321" },
   {
     value: "APE",
     label: "ape",
-    image: "/icons/APE.svg",
+    image: "/icons/ape.svg",
     address: "783947380",
   },
-];
+]
 
 export function SwapOn1InchForm({
   onChange,
   action,
   disabled = false,
 }: {
-  onChange: (values: z.infer<typeof swapOn1InchConfigSchema>) => void;
-  action: z.infer<typeof swapOn1InchConfigSchema>;
-  disabled?: boolean;
+  onChange: (values: z.infer<typeof swapOn1InchConfigSchema>) => void
+  action: z.infer<typeof swapOn1InchConfigSchema>
+  disabled?: boolean
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -306,21 +306,21 @@ export function SwapOn1InchForm({
           type="number"
           value={action.amount}
           onChange={(e) => {
-            onChange({ ...action, amount: Number(e.target.value) });
+            onChange({ ...action, amount: Number(e.target.value) })
           }}
           disabled={disabled}
         />
       </Label>
     </div>
-  );
+  )
 }
 
 export function MintNftForm({
   onChange,
   action,
 }: {
-  onChange: (values: z.infer<typeof MintNFTActionConfigSchema>) => void;
-  action: z.infer<typeof MintNFTActionConfigSchema>;
+  onChange: (values: z.infer<typeof MintNFTActionConfigSchema>) => void
+  action: z.infer<typeof MintNFTActionConfigSchema>
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -330,20 +330,20 @@ export function MintNftForm({
           placeholder="0x024658"
           value={action.address}
           onChange={(e) => {
-            onChange({ ...action, address: e.target.value });
+            onChange({ ...action, address: e.target.value })
           }}
         />
       </Label>
     </div>
-  );
+  )
 }
 
 export function SendERC721Form({
   onChange,
   action,
 }: {
-  onChange: (values: z.infer<typeof ERC721SendActionConfigSchema>) => void;
-  action: z.infer<typeof ERC721SendActionConfigSchema>;
+  onChange: (values: z.infer<typeof ERC721SendActionConfigSchema>) => void
+  action: z.infer<typeof ERC721SendActionConfigSchema>
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -353,10 +353,10 @@ export function SendERC721Form({
           placeholder="0x024658"
           value={action.receiver}
           onChange={(e) => {
-            onChange({ ...action, receiver: e.target.value });
+            onChange({ ...action, receiver: e.target.value })
           }}
         />
       </Label>
     </div>
-  );
+  )
 }
