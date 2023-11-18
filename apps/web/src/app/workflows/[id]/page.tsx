@@ -3,6 +3,17 @@ import { TopupFlo } from "../../../components/top-up-flow";
 import { WorkflowSteps } from "../../../components/workflow-steps";
 import { supabase } from "../../../lib/supabase";
 
+const tokenOptions = [
+  { value: "USDC", label: "USDC", image: "/icons/USDC.svg", address: "1234" },
+  { value: "GHO", label: "GHO", image: "/icons/GHO.svg", address: "54321" },
+  {
+    value: "APE",
+    label: "APE",
+    image: "/icons/APE.svg",
+    address: "783947380",
+  },
+];
+
 export default async function Page({ params }: { params: { id: string } }) {
   const workflowPromise = supabase
     .from("workflows")
@@ -20,14 +31,27 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const trigger = workflowTriggerSchema.parse(workflow.data?.trigger!);
 
+  const token = tokenOptions.find((t) => t.value === trigger.token.name);
+
   return (
     <div className="max-w-md mx-auto py-4">
       <TopupFlo address={workflow.data?.address!} />
-      <div className="flex justify-between items-center mt-4 mb-4">
+      <div className="flex justify-between items-center mt-4 mb-2">
         <h1 className="text-3xl">{workflow.data?.name}</h1>
       </div>
-      <div>
-        {trigger.type === "TOKENS_RECEIVED_ERC20" && <p>runs on receive</p>}
+      <div className="mb-4">
+        {trigger.type === "TOKENS_RECEIVED_ERC20" && (
+          <p>
+            Runs when{" "}
+            <img
+              className="inline mr-1 -translate-y-px relative"
+              src={token?.image}
+              width={16}
+              height={16}
+            />
+            {token?.label} is received
+          </p>
+        )}
       </div>
       <WorkflowSteps
         workflowId={Number(params.id)}
