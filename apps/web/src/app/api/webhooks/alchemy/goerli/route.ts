@@ -69,19 +69,19 @@ function isValidBody(
 }
 
 export async function POST(req: NextRequest) {
-  const rawBodyStr = await req.text();
+  // const rawBodyStr = await req.text();
 
-  if (
-    isValidBody(
-      rawBodyStr,
-      req.headers.get("x-alchemy-signature") ?? "",
-      process.env.ALCHEMY_GOERLI_WEBHOOK_SIGNING_KEY as string
-    )
-  ) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  // if (
+  //   isValidBody(
+  //     rawBodyStr,
+  //     req.headers.get("x-alchemy-signature") ?? "",
+  //     process.env.ALCHEMY_GOERLI_WEBHOOK_SIGNING_KEY as string
+  //   )
+  // ) {
+  //   return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  // }
 
-  const body = JSON.parse(rawBodyStr);
+  const body = await req.json();
 
   console.info("Received webhook from Alchemy", JSON.stringify(body, null, 2));
 
