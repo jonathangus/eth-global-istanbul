@@ -4,6 +4,7 @@ type InngestEvent =
   | {
       name: "app/tokens.received";
       data: {
+        chainId: number;
         fromAddress: string;
         toAddress: string;
         token: {
@@ -22,6 +23,7 @@ type InngestEvent =
   | {
       name: "app/workflow.created";
       data: {
+        chainId: number;
         address: string;
       };
     };

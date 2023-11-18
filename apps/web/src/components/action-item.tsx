@@ -35,6 +35,7 @@ import {
 } from "../app/components/ui/popover";
 import { STEP_ACTIONS, STEP_CONDITIONS } from "../step-constants";
 import Image from "next/image";
+import { Badge } from "../app/components/ui/badge";
 
 type ActionItemProps = {
   step: Step;
@@ -47,6 +48,7 @@ export const ActionItem = ({
   step,
   onChange,
   onRemoveStep,
+  isSigned,
 }: ActionItemProps) => {
   const handleDropdownChange = (newValue: string) => {
     if (newValue === ACTIONS.MINT_NFT) {
@@ -101,7 +103,7 @@ export const ActionItem = ({
 
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="flex-row justify-between items-center">
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -195,6 +197,13 @@ export const ActionItem = ({
             </SelectContent>
           </Select>
         </Label> */}
+        {isSigned ? (
+          <Badge className="bg-green-50 text-green-500" variant="secondary">
+            Signed
+          </Badge>
+        ) : (
+          <Badge variant="outline">Unsigned</Badge>
+        )}
       </CardHeader>
       <Separator className="mb-4" />
       <CardContent>

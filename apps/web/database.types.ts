@@ -95,6 +95,7 @@ export interface Database {
       workflows: {
         Row: {
           address: string
+          chain_id: number
           created_at: string
           id: number
           name: string
@@ -102,6 +103,7 @@ export interface Database {
         }
         Insert: {
           address: string
+          chain_id: number
           created_at?: string
           id?: number
           name: string
@@ -109,6 +111,7 @@ export interface Database {
         }
         Update: {
           address?: string
+          chain_id?: number
           created_at?: string
           id?: number
           name?: string
