@@ -1,8 +1,6 @@
 import { NonRetriableError } from 'inngest';
 import { z } from 'zod';
 import { ACTIONS, workflowStepSchema } from '../../schemas';
-import { SUPPORTED_CHAINS } from '../config';
-import { executeTransaction } from './execute-transaction';
 import { executions } from '../actions';
 
 export async function runStepAction(

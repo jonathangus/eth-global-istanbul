@@ -225,10 +225,6 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
 
       // console.log('result', );
       console.log(tx);
-
-      // const result = await executions['SWAP_ON_1INCH'](tx);
-
-      // console.log(result);
     }
 
     const workflowData = {

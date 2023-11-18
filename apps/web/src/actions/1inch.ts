@@ -29,8 +29,52 @@ export const getCallData = async (): Promise<Hex> => {
   // const value = 0n;
   // const data = '0x68656c6c6f';
 
-  const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'; // vitalik
-  const value = 0n;
+  const to = '0x82d3270f19CD2629005136089df8aFD96ff248a4'; // AB
+  const value = 100000000000000n;
+
+  const user = '0xa607e9FD075BB4b723b500318565d2Bf5015224F';
+
+  const callDataMint = encodeFunctionData({
+    abi: [
+      {
+        inputs: [
+          {
+            internalType: 'address',
+            name: '_to',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: '_phaseId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: '_quantity',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: '_signature',
+            type: 'bytes',
+          },
+        ],
+        stateMutability: 'payable',
+        type: 'function',
+        name: 'mint',
+        outputs: [],
+      },
+    ],
+    args: [
+      user,
+      0n,
+      1n,
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+    ],
+  });
+
+  // const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'; // vitalik
+  // const value = 0n;
   const data = '0x68656c6c6f'; // "hello" encoded to utf-8 bytes
 
   const callData = encodeFunctionData({
@@ -47,7 +91,7 @@ export const getCallData = async (): Promise<Hex> => {
         type: 'function',
       },
     ],
-    args: [to, value, data],
+    args: [to, value, callDataMint],
   });
   return callData;
 };
