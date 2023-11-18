@@ -1,22 +1,22 @@
-import { z } from "zod";
+import { z } from 'zod';
 import {
   ACTIONS,
   ERC721SendActionConfigSchema,
   MintNFTActionConfigSchema,
   swapOn1InchConfigSchema,
-} from "../../schemas";
-import { Card, CardContent, CardHeader } from "../app/components/ui/card";
-import { Input } from "../app/components/ui/input";
-import { Label } from "../app/components/ui/label";
+} from '../../schemas';
+import { Card, CardContent, CardHeader } from '../app/components/ui/card';
+import { Input } from '../app/components/ui/input';
+import { Label } from '../app/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../app/components/ui/select";
-import { Separator } from "../app/components/ui/separator";
-import { Step, Trigger } from "./flow-builder";
+} from '../app/components/ui/select';
+import { Separator } from '../app/components/ui/separator';
+import { Step, Trigger } from './flow-builder';
 
 import {
   Command,
@@ -24,17 +24,17 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "../app/components/ui/command";
-import { cn } from "../lib/utils";
-import { Button } from "../app/components/ui/button";
-import { CheckIcon } from "lucide-react";
+} from '../app/components/ui/command';
+import { cn } from '../lib/utils';
+import { Button } from '../app/components/ui/button';
+import { CheckIcon } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../app/components/ui/popover";
-import { STEP_ACTIONS, STEP_CONDITIONS } from "../step-constants";
-import Image from "next/image";
+} from '../app/components/ui/popover';
+import { STEP_ACTIONS, STEP_CONDITIONS } from '../step-constants';
+import Image from 'next/image';
 
 type ActionItemProps = {
   step: Step;
@@ -58,14 +58,14 @@ export const ActionItem = ({
 
   const tokenOptions = [
     {
-      value: "SEND_PUSH_PROTOCOL_NOTIFICATION",
-      label: "push notif",
-      image: "/icons/ape.svg",
+      value: 'SEND_PUSH_PROTOCOL_NOTIFICATION',
+      label: 'push notif',
+      image: '/icons/ape.svg',
     },
     {
-      value: "SWAP_ONE_INCH",
-      label: "swap 1inch",
-      image: "/icons/1inch-logo.svg",
+      value: 'SWAP_ONE_INCH',
+      label: 'swap 1inch',
+      image: '/icons/1inch-logo.svg',
     },
   ];
 
@@ -122,7 +122,7 @@ export const ActionItem = ({
                   {selected.label}
                 </span>
               ) : (
-                "Select..."
+                'Select...'
               )}
             </Button>
           </PopoverTrigger>
@@ -139,7 +139,7 @@ export const ActionItem = ({
                       handleDropdownChange(x.value);
                     }}
                     className={cn(
-                      step.action.type === x.value && "bg-slate-50"
+                      step.action.type === x.value && 'bg-slate-50'
                     )}
                   >
                     <img
@@ -162,7 +162,7 @@ export const ActionItem = ({
                       handleDropdownChange(x.value);
                     }}
                     className={cn(
-                      step.action.type === x.value && "bg-slate-50"
+                      step.action.type === x.value && 'bg-slate-50'
                     )}
                   >
                     <img
@@ -200,26 +200,26 @@ export const ActionItem = ({
       </CardHeader>
       <Separator className="mb-4" />
       <CardContent>
-        {step.action.type === "SWAP_ON_1INCH" && (
+        {step.action.type === 'SWAP_ON_1INCH' && (
           <SwapOn1InchForm
             action={step.action}
             onChange={(action) => onChange({ ...step, action })}
           />
         )}
-        {step.action.type === "MINT_NFT" && (
+        {step.action.type === 'MINT_NFT' && (
           <MintNftForm
             action={step.action}
             onChange={(action) => onChange({ ...step, action })}
           />
         )}
-        {step.action.type === "SEND_ERC_721" && (
+        {step.action.type === 'SEND_ERC_721' && (
           <SendERC721Form
             action={step.action}
             onChange={(action) => onChange({ ...step, action })}
           />
         )}
 
-        {!step.action.type.includes("_") && (
+        {!step.action.type.includes('_') && (
           <p className="text-center w-full text-gray-300">Loading</p>
         )}
       </CardContent>
@@ -228,13 +228,13 @@ export const ActionItem = ({
 };
 
 const TOKEN_OPTIONS = [
-  { value: "USDC", label: "usdc", image: "/icons/USDC.svg", address: "1234" },
-  { value: "GHO", label: "gho", image: "/icons/GHO.svg", address: "54321" },
+  { value: 'USDC', label: 'usdc', image: '/icons/USDC.svg', address: '1234' },
+  { value: 'GHO', label: 'gho', image: '/icons/GHO.svg', address: '54321' },
   {
-    value: "APE",
-    label: "ape",
-    image: "/icons/APE.svg",
-    address: "783947380",
+    value: 'APE',
+    label: 'ape',
+    image: '/icons/APE.svg',
+    address: '783947380',
   },
 ];
 
@@ -316,7 +316,7 @@ function MintNftForm({
         <span>Token Address</span>
         <Input
           placeholder="0x024658"
-          value={action.address}
+          value={action.address || '0x4ed05dd4b0149deda80ea26683b2ef72820e3e0f'}
           onChange={(e) => {
             onChange({ ...action, address: e.target.value });
           }}

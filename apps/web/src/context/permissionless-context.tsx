@@ -38,7 +38,6 @@ const buildTx = async ({
 }: any) => {
   const getCallDataFn = getCallData[step?.action.type];
 
-  console.log({ aaSenderAddress, owner, chainId });
   const callData = await getCallDataFn({ chainId, aaSenderAddress });
 
   const gasPrice = await bundlerClient.getUserOperationGasPrice();
@@ -99,12 +98,12 @@ const buildTx = async ({
     chainId,
   };
 
-  const transformFn = transformers['SWAP_ON_1INCH'];
+  const transformFn = transformers[step?.action.type];
 
   return {
     tx_sign_data,
     order: 0,
-    type: 'SWAP_ON_1INCH',
+    type: step?.action.type,
     action: transformFn(step, chainId),
   };
 };
@@ -241,8 +240,8 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
 
       txs++;
 
-      const result = await executions['SWAP_ON_1INCH'](tx);
-      console.log(result);
+      // const result = await executions[step?.action.type](tx);
+      // console.log(result);
       setCompletedSteps((prev) => [...prev, step.order]);
 
       workflow.steps[i]!.tx_sign_data = tx.tx_sign_data;

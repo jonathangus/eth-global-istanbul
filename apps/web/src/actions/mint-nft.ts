@@ -19,7 +19,7 @@ export const getCallData = async ({
 }): Promise<Hex> => {
   const config = getChainConfig(chainId);
   const to = config.NFT_ADDRESS;
-  const value = 100000000000000n;
+  const value = 0n;
   const user = aaSenderAddress;
 
   const callDataMint = encodeFunctionData({
