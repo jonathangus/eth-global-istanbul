@@ -14,8 +14,7 @@ scroll-sepolia = "${SCROLL_SEPOLIA_RPC_URL}"
 
 [etherscan]
 base-goerli = { key = "${ETHERSCAN_API_KEY}", chain = 84531, url = "https://api-goerli.basescan.org/api" }
-base = { key = "${BASE_ETHERSCAN_API_KEY}", chain = 8453, url = "https://api.basescan.org/api" }
-linea-testnet = { key = "${ETHERSCAN_API_KEY}", url = "https://api-testnet.lineascan.build/api" }
-
+linea-testnet = { key = "${LINEASCAN_API_KEY}", url = "https://api-testnet.lineascan.build/api" }
+scroll-sepolia = { key = "${SCROLLSCAN_API_KEY}", url = "https://api-sepolia.scrollscan.com/api" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -33,12 +33,6 @@ export const TriggerItem = ({ trigger, onChange }: TriggerItemProps) => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <div>
-          {trigger.type}
-          {trigger.token.address}
-          {trigger.token.amount}
-          {trigger.token.name}
-        </div>
         <Label className="space-y-2">
           <span>On event</span>
           <Select value={trigger.type}>

@@ -1,21 +1,22 @@
-'use client';
+"use client";
 import {
   UserOperation,
   getSenderAddress,
   signUserOperationHashWithECDSA,
-} from 'permissionless';
-import type { PropsWithChildren } from 'react';
-import { createContext, useContext, useState } from 'react';
-import { Address, Hex, concat, encodeFunctionData } from 'viem';
-import { abi as simpleAccountABI } from '../abi/simple-account';
-import { usepassKeyContext } from './passkey-context';
+} from "permissionless";
+import type { PropsWithChildren } from "react";
+import { createContext, useContext, useState } from "react";
+import { Address, Hex, concat, encodeFunctionData } from "viem";
+import { abi as simpleAccountABI } from "../abi/simple-account";
+import { usepassKeyContext } from "./passkey-context";
 
-import axios from 'axios';
-import { useMutation } from 'wagmi';
-import { z } from 'zod';
-import { ACTIONS, createWorkflowSchema } from '../../schemas';
-import { actions, transformers } from '../actions';
-import { useChain } from '../hooks/use-chain';
+import axios from "axios";
+import { useMutation } from "wagmi";
+import { z } from "zod";
+import { ACTIONS, createWorkflowSchema } from "../../schemas";
+import { actions, transformers } from "../actions";
+import { useChain } from "../hooks/use-chain";
+import { useRouter } from "next/navigation";
 
 interface PermissionlessContext {}
 
@@ -35,7 +36,7 @@ const buildTx = async ({
   paymasterClient,
   step,
 }: any) => {
-  const action = actions['SWAP_ON_1INCH'];
+  const action = actions["SWAP_ON_1INCH"];
 
   // TODO
   const callData = await action(step);
@@ -45,13 +46,13 @@ const buildTx = async ({
   const userOperation = {
     sender: aaSenderAddress,
     nonce: nonce,
-    initCode: accountExist ? '0x' : initCode,
+    initCode: accountExist ? "0x" : initCode,
     callData,
     maxFeePerGas: gasPrice.fast.maxFeePerGas,
     maxPriorityFeePerGas: gasPrice.fast.maxPriorityFeePerGas,
     // dummy signature, needs to be there so the SimpleAccount doesn't immediately revert because of invalid signature length
     signature:
-      '0xa15569dd8f8324dbeabf8073fdec36d4b754f53ce5901e283c6de79af177dc94557fa3c9922cd7af2a96ca94402d35c39f266925ee6407aeb32b31d76978d4ba1c' as Hex,
+      "0xa15569dd8f8324dbeabf8073fdec36d4b754f53ce5901e283c6de79af177dc94557fa3c9922cd7af2a96ca94402d35c39f266925ee6407aeb32b31d76978d4ba1c" as Hex,
   };
 
   console.log({ userOperation });
@@ -70,7 +71,7 @@ const buildTx = async ({
     paymasterAndData: sponsorUserOperationResult.paymasterAndData,
   };
 
-  console.log('Received paymaster sponsor result:', sponsorUserOperationResult);
+  console.log("Received paymaster sponsor result:", sponsorUserOperationResult);
 
   const signature = await signUserOperationHashWithECDSA({
     account: owner,
@@ -91,19 +92,19 @@ const buildTx = async ({
     callGasLimit: Number(sponsorUserOperationResult.callGasLimit),
     paymasterAndData: sponsorUserOperationResult.paymasterAndData,
     callData,
-    initCode: accountExist ? '0x' : initCode,
+    initCode: accountExist ? "0x" : initCode,
     sender: aaSenderAddress,
     signature,
     nonce: Number(userOperation.nonce),
     chainId,
   };
 
-  const transform = transformers['SWAP_ON_1INCH'];
+  const transform = transformers["SWAP_ON_1INCH"];
 
   return {
     tx_sign_data,
     order: 0,
-    type: 'SWAP_ON_1INCH',
+    type: "SWAP_ON_1INCH",
     action: transform(step),
   };
 };
@@ -118,14 +119,19 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     chainId,
   } = useChain();
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const router = useRouter();
 
   const { mutate: createWorkflowMutation, isLoading: isSaving } = useMutation(
     async (input: z.infer<typeof createWorkflowSchema>) => {
       console.log({ input });
-      const res = await axios.post('/api/workflows', JSON.stringify(input));
+      const res = await axios.post("/api/workflows", JSON.stringify(input));
       return res.data;
     },
-    { onSuccess: console.log }
+    {
+      onSuccess: (workflow) => {
+        router.push(`/workflows/${workflow.id}`);
+      },
+    }
   );
 
   const { account } = usepassKeyContext();
@@ -133,9 +139,9 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     workflow: z.infer<typeof createWorkflowSchema>
   ) => {
     if (!account) {
-      return console.warn('missing logged in');
+      return console.warn("missing logged in");
     }
-    console.log('time to execute...');
+    console.log("time to execute...");
     setCompletedSteps([]);
 
     const initCode = concat([
@@ -145,26 +151,26 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
           {
             inputs: [
               {
-                internalType: 'address',
-                name: 'owner',
-                type: 'address',
+                internalType: "address",
+                name: "owner",
+                type: "address",
               },
               {
-                internalType: 'uint256',
-                name: 'salt',
-                type: 'uint256',
+                internalType: "uint256",
+                name: "salt",
+                type: "uint256",
               },
             ],
-            name: 'createAccount',
+            name: "createAccount",
             outputs: [
               {
-                internalType: 'contract SimpleAccount',
-                name: 'ret',
-                type: 'address',
+                internalType: "contract SimpleAccount",
+                name: "ret",
+                type: "address",
               },
             ],
-            stateMutability: 'nonpayable',
-            type: 'function',
+            stateMutability: "nonpayable",
+            type: "function",
           },
         ],
         args: [account.address, 0n],
@@ -174,7 +180,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       initCode,
       entryPoint: ENTRY_POINT_ADDRESS,
     });
-    console.log('aa address:', senderAddress);
+    console.log("aa address:", senderAddress);
 
     let nonce = 0n;
     let accountExist;
@@ -182,7 +188,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       nonce = await publicClient.readContract({
         address: senderAddress,
         abi: simpleAccountABI,
-        functionName: 'getNonce',
+        functionName: "getNonce",
       });
       accountExist = true;
     } catch (e) {
@@ -208,24 +214,21 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       }
 
       if (
-        !([ACTIONS.SWAP_ON_1INCH] as string[]).includes(step?.action.type ?? '')
+        !([ACTIONS.SWAP_ON_1INCH] as string[]).includes(step?.action.type ?? "")
       ) {
         continue;
       }
-
-      txs++;
 
       const nextNonce = nonce + BigInt(txs);
 
       console.log({ nonce, txs, nextNonce });
 
-      // TODO CHECK IF TX IS NEEDED
       const tx = await buildTx({
         owner: account,
         chainId,
         entryPoint: ENTRY_POINT_ADDRESS,
         publicClient,
-        nonce: nextNonce,
+        nonce: 0n,
         accountExist,
         aaSenderAddress,
         bundlerClient,
@@ -233,6 +236,8 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
         initCode,
         step,
       } as any);
+
+      txs++;
 
       setCompletedSteps((prev) => [...prev, step.order]);
 

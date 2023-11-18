@@ -8,21 +8,18 @@ pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 
-import {ComplexAccountFactory} from "src/ComplexAccountFactory.sol";
-import {IEntryPoint} from "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
+import {MockERC20} from "src/MockERC20.sol";
 
-contract DeployComplexAccountFactory is Script {
+contract DeployMock is Script {
     function run() external {
         // Account to deploy from
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-
-        address ENTRY_POINT = 0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789;
 
         // Start broadcasting transactions
         vm.startBroadcast(deployerPrivateKey);
 
         // Deploy Implementation Contracts
-        new ComplexAccountFactory(IEntryPoint(ENTRY_POINT));
+        new MockERC20();
 
         vm.stopBroadcast();
     }

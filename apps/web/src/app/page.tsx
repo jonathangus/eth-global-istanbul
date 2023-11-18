@@ -3,7 +3,7 @@
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { ChainSelector } from "../components/chain-selector";
 import { FlowBuilder } from "../components/flow-builder";
-import { RegisterFlow } from "../components/register-flow";
+import { TopupFlo } from "../components/top-up-flow";
 import { usepassKeyContext } from "../context/passkey-context";
 import { useAA } from "../context/permissionless-context";
 import { Avatar, AvatarImage } from "./components/ui/avatar";
@@ -84,7 +84,6 @@ export default function Page(): JSX.Element {
         {/* <main className="pl-80"> */}
         <div className="flex gap-4 w-full justify-stretch">
           <ChainSelector />
-          <RegisterFlow />
         </div>
         <FlowBuilder />
         {/* </main> */}

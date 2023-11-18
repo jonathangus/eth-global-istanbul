@@ -3,8 +3,9 @@
 import { GateFiSDK, GateFiDisplayModeEnum } from "@gatefi/js-sdk";
 import { useEffect, useRef } from "react";
 import { Button } from "../app/components/ui/button";
+import { usepassKeyContext } from "../context/passkey-context";
 
-export function RegisterFlow() {
+export function TopupFlo({ address }: { address: string }) {
   const sdk = useRef<GateFiSDK>();
   useEffect(() => {
     sdk.current = new GateFiSDK({
@@ -12,7 +13,7 @@ export function RegisterFlow() {
       displayMode: GateFiDisplayModeEnum.Overlay,
       nodeSelector: "#gatefi-button",
       // TODO: replace with AA wallet address
-      walletAddress: "0xD71256eC24925873cE9E9F085f89864Ca05970bD",
+      walletAddress: address,
       isSandbox: true,
     });
 
@@ -27,7 +28,7 @@ export function RegisterFlow() {
 
   return (
     <div>
-      <Button id="gatefi-button" variant="outline">
+      <Button id="gatefi-button" variant="outline" size="sm">
         Topup with Unlimit
       </Button>
     </div>
