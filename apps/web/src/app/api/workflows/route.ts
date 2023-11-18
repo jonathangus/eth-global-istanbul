@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       steps: z.array(
         stepsInsertSchema
           .omit({ workflow_id: true })
-          .extend({ config: stepActionConfig })
+          .extend({ action: stepActionConfig })
       ),
       trigger: workflowTriggerSchema,
     })
@@ -51,9 +51,10 @@ export async function POST(req: NextRequest) {
   const stepInsert = await supabase.from("steps").insert(
     values.steps.map((step) => ({
       type: step.type,
-      config: step.config,
+      action: step.action,
       order: step.order,
       workflow_id: workflow.id,
+      tx_sign_data: step.tx_sign_data,
     }))
   );
 

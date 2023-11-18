@@ -4,6 +4,7 @@ import { lineaTestnet } from 'viem/chains';
 
 interface UiContext {
   chainId: number;
+  setChainId: (val: number) => void;
 }
 
 export const uiContext = createContext<UiContext>({} as UiContext);

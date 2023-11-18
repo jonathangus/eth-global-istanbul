@@ -24,7 +24,7 @@ export const TriggerItem = ({
   }
 
   const handleTokenChange = (newValue: string) => {
-    onChange({ ...trigger, token: { ...trigger.token, address: newValue } })
+    onChange({ ...trigger, token: { ...trigger.token, name: newValue } })
   }
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,9 +47,14 @@ export const TriggerItem = ({
   ]
 
   const tokenOptions = [
-    { value: "0x12323243412328", label: "usdc", image: "/icons/usdc.svg" },
-    { value: "0x123232434231", label: "gho", image: "/icons/gho.svg" },
-    { value: "0x1232324123243", label: "ape", image: "/icons/ape.svg" },
+    { value: "USDC", label: "usdc", image: "/icons/USDC.svg", address: "1234" },
+    { value: "GHO", label: "gho", image: "/icons/GHO.svg", address: "54321" },
+    {
+      value: "APE",
+      label: "ape",
+      image: "/icons/APE.svg",
+      address: "783947380",
+    },
   ]
 
   return (
@@ -70,7 +75,7 @@ export const TriggerItem = ({
         {trigger.type === "TOKENS_RECEIVED" && (
           <div className="flex w-1/4">
             <TokenSelect
-              value={trigger.token.address}
+              value={trigger.token.name}
               onChange={handleTokenChange}
               options={tokenOptions}
             />
