@@ -142,7 +142,8 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
 
   const { mutate: saveSteps, isLoading: isSaving } = useMutation(
     async (input) => {
-      axios.post('/api/workflows', input);
+      console.log({ input });
+      await axios.post('/api/workflows', JSON.stringify(input));
     }
   );
 
@@ -154,7 +155,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     if (!account) {
       return console.warn('missing logged in');
     }
-
+    console.log('time to execute...');
     setCompletedSteps([]);
 
     const initCode = concat([
@@ -239,9 +240,8 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       } as any);
       setCompletedSteps((prev) => [...prev, step.order]);
       txs.push(tx);
+      console.log(tx);
     }
-
-    const owner = account;
 
     const workflowData = {
       name: 'my flow',
@@ -256,17 +256,20 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       },
       steps: txs,
     };
+
+    saveSteps(workflowData);
   };
 
   const value = {
     isLoading,
+    completedSteps,
   };
 
   return (
     <permissionlessContext.Provider value={value}>
-      {/* <div onClick={() => execute()}>make tx</div>
+      <div onClick={() => execute()}>make tx</div>
       {isLoading && <div>loading...</div>}
-      passkey: {account?.address} */}
+      passkey: {account?.address}
       {children}
     </permissionlessContext.Provider>
   );
