@@ -101,14 +101,14 @@ const TOKEN_OPTIONS = [
   {
     value: "USDC",
     label: "USDC",
-    image: "/icons/USDC.svg",
+    image: "/icons/usdc.svg",
     address: "0x12323243412328",
   },
-  { value: "GHO", label: "GHO", image: "/icons/GHO.svg", address: "54321" },
+  { value: "GHO", label: "GHO", image: "/icons/gho.svg", address: "54321" },
   {
     value: "APE",
     label: "APE",
-    image: "/icons/APE.svg",
+    image: "/icons/ape.svg",
     address: "783947380",
   },
   {
