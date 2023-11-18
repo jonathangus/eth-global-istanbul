@@ -94,6 +94,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     const subOrgName = `ETHGlobal Instanbul - ${chainName} -  ${humanReadableDateTime()}`;
     const authenticatorUserId = generateRandomBuffer();
 
+    console.log({ chainId, authenticatorUserId });
     const attestation = await getWebAuthnAttestation({
       publicKey: {
         rp: {
@@ -116,6 +117,9 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
         },
       },
     });
+
+    console.log({ attestation });
+
     const res = await axios.post('/api/turnkey/create-sub-org', {
       subOrgName: subOrgName,
       attestation,
@@ -147,12 +151,18 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     setAccount(viemAccount);
   };
 
-  const { mutate: login, isLoading: isLoggingIn } = useMutation(async () =>
-    _login()
+  const { mutate: login, isLoading: isLoggingIn } = useMutation(
+    async () => _login(),
+    {
+      onError: console.error,
+    }
   );
 
-  const { mutate: register, isLoading: isRegistering } = useMutation(async () =>
-    createSubOrg()
+  const { mutate: register, isLoading: isRegistering } = useMutation(
+    async () => createSubOrg(),
+    {
+      onError: console.error,
+    }
   );
 
   const value = {
