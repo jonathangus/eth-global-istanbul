@@ -3,6 +3,7 @@ import {
   ENTRY_POINT_ADDRESSES,
   ACCOUNT_FACTORY_ADDRESSES,
   SUPPORTED_CHAINS,
+  MOCK_ERC_721,
 } from './config';
 
 export const getChainConfig = (chainId: SUPPORTED_CHAINS) => {
@@ -16,11 +17,14 @@ export const getChainConfig = (chainId: SUPPORTED_CHAINS) => {
 
   const ENTRY_POINT_ADDRESS = ENTRY_POINT_ADDRESSES[chainId];
 
+  const NFT_ADDRESS = MOCK_ERC_721[chainId];
+
   return {
     publicClient,
     bundlerClient,
     paymasterClient,
     SIMPLE_ACCOUNT_FACTORY_ADDRESS,
     ENTRY_POINT_ADDRESS,
+    NFT_ADDRESS,
   };
 };

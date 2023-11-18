@@ -36,9 +36,10 @@ const buildTx = async ({
   paymasterClient,
   step,
 }: any) => {
-  const getCallDataFn = getCallData['SWAP_ON_1INCH'];
+  const getCallDataFn = getCallData[step?.action.type];
 
-  const callData = await getCallDataFn({ chainId, owner: aaSenderAddress });
+  console.log({ aaSenderAddress, owner, chainId });
+  const callData = await getCallDataFn({ chainId, aaSenderAddress });
 
   const gasPrice = await bundlerClient.getUserOperationGasPrice();
 
@@ -122,7 +123,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
 
   const { mutate: createWorkflowMutation, isLoading: isSaving } = useMutation(
     async (input: z.infer<typeof createWorkflowSchema>) => {
-      console.log({ input });
+      console.log('create workflow', input);
       const res = await axios.post('/api/workflows', JSON.stringify(input));
       return res.data;
     },
@@ -213,7 +214,9 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       }
 
       if (
-        !([ACTIONS.SWAP_ON_1INCH] as string[]).includes(step?.action.type ?? '')
+        !([ACTIONS.SWAP_ON_1INCH, ACTIONS.MINT_NFT] as string[]).includes(
+          step?.action.type ?? ''
+        )
       ) {
         continue;
       }
@@ -221,7 +224,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       const nextNonce = nonce + BigInt(txs);
 
       console.log({ nonce, txs, nextNonce });
-
+      console.log({ step });
       const tx = await buildTx({
         owner: account,
         chainId,
