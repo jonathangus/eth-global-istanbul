@@ -36,19 +36,19 @@ export const passKeyContext = createContext<PassKeyContext>(
 );
 
 export function PassKeyContextProvider({ children }: PropsWithChildren) {
-  const { chainId } = useChain();
+  const { chainId, publicClient } = useChain();
   const [subOrgId, setSubOrgId] = useState<string | null>(null);
   const [privateKeyId, setPrivateKeyId] = useState<string | null>(null);
   const [account, setAccount] = useState<LocalAccount | null>();
-
+  const chainName = publicClient.chain.name;
   const stamper = new WebauthnStamper({
     rpId: 'localhost',
   });
 
   useEffect(() => {
     setAccount(null);
-    setSubOrgId(localStorage.getItem(`subOrgId-${chainId}`));
-    setPrivateKeyId(localStorage.getItem(`privateKeyId-${chainId}`));
+    setSubOrgId(localStorage.getItem(`subOrgId-${chainName}`));
+    setPrivateKeyId(localStorage.getItem(`privateKeyId-${chainName}`));
   }, [chainId]);
 
   const passkeyHttpClient = new TurnkeyClient(
@@ -84,14 +84,14 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     setPrivateKeyId(response.data['privateKeyId']);
 
     window.localStorage.setItem(
-      `privateKeyId-${chainId}`,
+      `privateKeyId-${chainName}`,
       response.data['privateKeyId']
     );
   };
 
   const createSubOrg = async () => {
     const challenge = generateRandomBuffer();
-    const subOrgName = `ETHGlobal Instanbul - ${chainId} -  ${humanReadableDateTime()}`;
+    const subOrgName = `ETHGlobal Instanbul - ${chainName} -  ${humanReadableDateTime()}`;
     const authenticatorUserId = generateRandomBuffer();
 
     const attestation = await getWebAuthnAttestation({
@@ -124,7 +124,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
 
     setSubOrgId(res.data.subOrgId);
 
-    window.localStorage.setItem(`subOrgId-${chainId}`, res.data.subOrgId);
+    window.localStorage.setItem(`subOrgId-${chainName}`, res.data.subOrgId);
 
     createPrivateKey(res.data.subOrgId);
   };

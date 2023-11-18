@@ -1,4 +1,7 @@
 import { Address, Chain, Hex, encodeFunctionData } from 'viem';
+import { executeTransaction } from '../lib/execute-transaction';
+import { workflowStepSchema } from '../../schemas';
+import { z } from 'zod';
 
 type TwoPoint54CmOptions = {
   fromTokenAddress: Address;
@@ -50,7 +53,14 @@ export const getCallData = async (): Promise<Hex> => {
   return callData;
 };
 
-export const execute = async () => {};
+export const execute = async (
+  workflowStep: z.infer<typeof workflowStepSchema>
+) => {
+  console.log('WORKFLOW:::', workflowStep.tx_sign_data);
+  const result = await executeTransaction(59140, workflowStep.tx_sign_data!);
+
+  return result;
+};
 
 const buildTransactions = async ({ chain }) => {
   const { chainId } = chain;

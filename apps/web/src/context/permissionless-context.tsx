@@ -13,7 +13,7 @@ import { abi as simpleAccountABI } from '../abi/simple-account';
 import { useChain } from '../hooks/use-chain';
 import { useMutation } from 'wagmi';
 import axios from 'axios';
-import { actions, transformers } from '../actions';
+import { actions, executions, transformers } from '../actions';
 import { executeTransaction } from '../lib/execute-transaction';
 
 interface PermissionlessContext {}
@@ -221,9 +221,12 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       setCompletedSteps((prev) => [...prev, step.order]);
       txs.push(tx);
 
-      // const result = await executeTransaction(chainId, tx.tx_sign_data);
       // console.log('result', );
       console.log(tx);
+
+      // const result = await executions['SWAP_ON_1INCH'](tx);
+
+      // console.log(result);
     }
 
     const workflowData = {

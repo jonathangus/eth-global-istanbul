@@ -1,13 +1,13 @@
-import { z } from "zod";
-import { stepsRowSchema } from "./database.schemas";
+import { z } from 'zod';
+import { stepsRowSchema } from './database.schemas';
 
 export const TRIGGER_TYPE = {
-  TOKENS_RECEIVED: "TOKENS_RECEIVED",
+  TOKENS_RECEIVED: 'TOKENS_RECEIVED',
 };
 
 export const ACTIONS = {
-  SEND_PUSH_PROTOCOL_NOTIFICATION: "SEND_PUSH_PROTOCOL_NOTIFICATION",
-  SWAP_ON_1INCH: "SWAP_ON_1INCH",
+  SEND_PUSH_PROTOCOL_NOTIFICATION: 'SEND_PUSH_PROTOCOL_NOTIFICATION',
+  SWAP_ON_1INCH: 'SWAP_ON_1INCH',
 } as const;
 
 export const pushProtocolActionConfigSchema = z.object({
@@ -48,8 +48,8 @@ export const stepTxSignDataSchema = z.object({
   verificationGasLimit: z.number(),
   callGasLimit: z.number(),
   paymasterAndData: z.string(),
-  to: z.string(),
-  data: z.string(),
+  to: z.string().optional(),
+  data: z.string().optional(),
   callData: z.string(),
   initCode: z.string(),
   sender: z.string(),
@@ -63,7 +63,7 @@ export const workflowStepSchema = stepsRowSchema.extend({
 });
 
 export const STEP_RUN_STATUS = {
-  PENDING: "PENDING",
-  RUNNING: "RUNNING",
-  COMPLETED: "COMPLETED",
+  PENDING: 'PENDING',
+  RUNNING: 'RUNNING',
+  COMPLETED: 'COMPLETED',
 } as const;
