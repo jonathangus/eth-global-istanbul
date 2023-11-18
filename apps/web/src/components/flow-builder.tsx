@@ -124,7 +124,7 @@ export function FlowBuilder() {
 
       {steps.map((step) => (
         <>
-          <div className="h-24 relative">
+          <div className="h-16 relative">
             <DownArrow />
             <div className="w-[2px] h-full  bg-gray-300" />
           </div>
