@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 import {
   ACTIONS,
@@ -45,13 +45,20 @@ export function FlowBuilder() {
   const [trigger, setTrigger] = useState<Trigger | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
 
+  const addStepButtonRef = useRef<HTMLButtonElement>();
+
   const addTrigger = (newTrigger: Trigger) => {
     setTrigger(newTrigger);
   };
 
-  const addStep = (newStep: Step) => {
+  const addStep = async (newStep: Step) => {
     const stepWithId = { ...newStep, id: stepIdCounter++ };
     setSteps([...steps, stepWithId]);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    addStepButtonRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
   };
 
   const onRemoveStep = (stepToRemove: Step) => {
@@ -82,7 +89,7 @@ export function FlowBuilder() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center">
       {trigger && (
         <TriggerItem
           trigger={trigger}
@@ -93,7 +100,10 @@ export function FlowBuilder() {
 
       {steps.map((step: any) => (
         <>
-          <DownArrow />
+          <div className="h-24 relative">
+            <DownArrow />
+            <div className="w-[2px] h-full  bg-gray-300" />
+          </div>
           <ActionItem
             trigger={trigger}
             key={step.id}
@@ -111,40 +121,44 @@ export function FlowBuilder() {
           />
         </>
       ))}
+      <div className="space-y-4 flex flex-col mt-8">
+        {!trigger && (
+          <Button onClick={() => addTrigger(Initialtrigger)}>
+            Add trigger
+          </Button>
+        )}
 
-      {!trigger && (
-        <Button onClick={() => addTrigger(Initialtrigger)}>Add trigger</Button>
-      )}
-
-      {trigger && (
-        <Button
-          variant="outline"
-          onClick={() =>
-            addStep({
-              ...InitialStep,
-              order: steps.length + 1,
-              action: {
-                type: ACTIONS.SWAP_ON_1INCH,
-                chainId: 1,
-                fromToken: {
-                  address: "0x0",
+        {trigger && (
+          <Button
+            variant="outline"
+            ref={addStepButtonRef}
+            onClick={() =>
+              addStep({
+                ...InitialStep,
+                order: steps.length + 1,
+                action: {
+                  type: ACTIONS.SWAP_ON_1INCH,
+                  chainId: 1,
+                  fromToken: {
+                    address: "0x0",
+                  },
+                  toToken: {
+                    address: "0x0",
+                  },
+                  amount: 10,
                 },
-                toToken: {
-                  address: "0x0",
-                },
-                amount: 10,
-              },
-              tx_sign_data: null,
-            })
-          }
-        >
-          Add step
-        </Button>
-      )}
+                tx_sign_data: null,
+              })
+            }
+          >
+            Add step
+          </Button>
+        )}
 
-      {trigger && steps.length > 0 && (
-        <Button onClick={deployFlow}>Deploy Flow</Button>
-      )}
+        {trigger && steps.length > 0 && (
+          <Button onClick={deployFlow}>Deploy Flow</Button>
+        )}
+      </div>
     </div>
   );
 }

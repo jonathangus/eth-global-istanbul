@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { AvatarFallback } from '@radix-ui/react-avatar';
-import { ChainSelector } from '../components/chain-selector';
-import { FlowBuilder } from '../components/flow-builder';
-import { RegisterFlow } from '../components/register-flow';
-import { usepassKeyContext } from '../context/passkey-context';
-import { useAA } from '../context/permissionless-context';
-import { Avatar, AvatarImage } from './components/ui/avatar';
-import { Button } from './components/ui/button';
+import { AvatarFallback } from "@radix-ui/react-avatar";
+import { ChainSelector } from "../components/chain-selector";
+import { FlowBuilder } from "../components/flow-builder";
+import { RegisterFlow } from "../components/register-flow";
+import { usepassKeyContext } from "../context/passkey-context";
+import { useAA } from "../context/permissionless-context";
+import { Avatar, AvatarImage } from "./components/ui/avatar";
+import { Button } from "./components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -15,11 +15,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './components/ui/dialog';
+} from "./components/ui/dialog";
 
-import { Loader } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useChain } from '../hooks/use-chain';
+import { Loader } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useChain } from "../hooks/use-chain";
 
 export default function Page(): JSX.Element {
   const aa = useAA();
@@ -27,7 +27,7 @@ export default function Page(): JSX.Element {
     usepassKeyContext();
   const { chainId } = useChain();
 
-  const [open, setOpen] = useState();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setOpen(!account);
@@ -53,7 +53,7 @@ export default function Page(): JSX.Element {
           <Button
             disabled={privateKeyId || isRegistering}
             onClick={register}
-            variant={privateKeyId ? 'outline' : 'default'}
+            variant={privateKeyId ? "outline" : "default"}
           >
             Register
             {isRegistering && <Loader className="w-4 h-4 animate-spin ml-2" />}
