@@ -2,7 +2,8 @@ import { createHmac } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { z } from "zod";
-import { inngest } from "../../../../lib/inngest";
+import { inngest } from "../../../../../lib/inngest";
+import { baseGoerli } from "viem/chains";
 
 const logSchema = z.object({
   removed: z.boolean(),
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
     isValidBody(
       rawBodyStr,
       req.headers.get("x-alchemy-signature") ?? "",
-      process.env.ALCHEMY_GOERLI_WEBHOOK_SIGNING_KEY as string
+      process.env.ALCHEMY_BASE_GOERLI_WEBHOOK_SIGNING_KEY as string
     )
   ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
@@ -88,6 +89,7 @@ export async function POST(req: NextRequest) {
 
   const transfers = payload.event.activity.map((activity) => {
     return {
+      chainId: baseGoerli.id,
       fromAddress: activity.fromAddress.toLowerCase(),
       toAddress: activity.toAddress.toLowerCase(),
       token: {

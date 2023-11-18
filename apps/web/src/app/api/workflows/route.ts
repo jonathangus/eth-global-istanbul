@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
         address: values.address.toLowerCase(),
         name: values.name,
         trigger: values.trigger,
+        chain_id: values.chain_id,
       })
       .select();
 
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
     const sendEventResponse = await inngest.send({
       name: "app/workflow.created",
       data: {
+        chainId: values.chain_id,
         address: values.address,
       },
     });

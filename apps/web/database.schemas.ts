@@ -76,6 +76,7 @@ export const stepsUpdateSchema = z.object({
 
 export const workflowsRowSchema = z.object({
   address: z.string(),
+  chain_id: z.number(),
   created_at: z.string(),
   id: z.number(),
   name: z.string(),
@@ -84,6 +85,7 @@ export const workflowsRowSchema = z.object({
 
 export const workflowsInsertSchema = z.object({
   address: z.string(),
+  chain_id: z.number(),
   created_at: z.string().optional(),
   id: z.number().optional(),
   name: z.string(),
@@ -92,6 +94,7 @@ export const workflowsInsertSchema = z.object({
 
 export const workflowsUpdateSchema = z.object({
   address: z.string().optional(),
+  chain_id: z.number().optional(),
   created_at: z.string().optional(),
   id: z.number().optional(),
   name: z.string().optional(),

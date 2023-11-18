@@ -97,6 +97,8 @@ export function FlowBuilder() {
   const { account } = usepassKeyContext();
   const { createWorkflow, isSaving, completedSteps } = useAA();
 
+  const { chainId } = useChain();
+
   const deployFlow = async () => {
     console.log("deploy flow");
     createWorkflow({
@@ -104,10 +106,9 @@ export function FlowBuilder() {
       name: workFlowName,
       trigger: trigger,
       steps: steps,
+      chain_id: chainId,
     });
   };
-
-  const { chainId } = useChain();
 
   return (
     <div className="flex flex-col items-center">
