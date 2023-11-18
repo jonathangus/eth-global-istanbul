@@ -10,6 +10,7 @@
     "gen-types": "npx supabase gen types typescript --project-id msulgytoymccrlhufgok > database.types.ts && npx supabase-to-zod --input database.types.ts --output database.schemas.ts"
   },
   "dependencies": {
+    "@gatefi/js-sdk": "^0.14.0",
     "@hookform/resolvers": "^3.3.2",
     "@pushprotocol/restapi": "^1.4.38",
     "@radix-ui/react-accordion": "^1.1.2",
