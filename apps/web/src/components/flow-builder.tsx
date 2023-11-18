@@ -8,65 +8,43 @@ import {
   stepsInsertSchema,
   workflowsInsertSchema,
 } from "../../database.schemas"
-import { z } from "zod"
+import { TypeOf, z } from "zod"
+import { stepConfigSchema, workflowTriggerSchema } from "../../schemas"
 
 const Initialtrigger = {
-  id: "trigger-1",
-  type: "tokenReceived",
-  content: "on tokens received",
-  address: "",
-  amount: 0,
+  type: "TOKENS_RECEIVED",
+  token: {
+    name: "usdc",
+    address: "0x12323243412328",
+    amount: 10,
+  },
 }
 
 const InitialStep = {
-  id: "1",
-  type: "1inch",
-  content: "step 1",
+  config: {
+    type: "SEND_PUSH_PROTOCOL",
+    foo: "blablba",
+  },
+  created_at: "",
+  id: 1,
+  order: 1,
+  type: "action",
+  workflow_id: 1,
 }
 
-export type Trigger = {
-  id: string
-  type: string
-  content: string
-  address: string
-  amount: number
-}
+export type Trigger = z.infer<typeof workflowTriggerSchema>
 
 export type Step = {
-  id: string
+  config: {
+    type: string
+    foo: string
+  }
+  created_at?: string
+  id: number
+  order: number
   type: string
-  content: string
+  workflow_id: number
 }
-
-// const Initialtrigger = {
-//   id: "1",
-//   created_at: "",
-//   address: "",
-//   name: "on tokens received erc-20",
-//   trigger: {
-//     id: "1",
-//     type: "tokenReceived",
-//     content: "on tokens received erc-20",
-//     address: "0x12323243412328",
-//     amount: 100,
-//   },
-// }
-
-// const InitialStep = {
-//   config: {
-//     amount: 100,
-//     from: "0x12323243412328",
-//     to: "0x12323243412328",
-//   },
-//   created_at: "",
-//   id: "1",
-//   order: 1,
-//   type: "1inch",
-//   workflow_id: 1,
-// }
-
-// type Trigger = z.infer<typeof workflowsInsertSchema>
-// type Step = z.infer<typeof stepsInsertSchema>
 
 export function FlowBuilder() {
   const [trigger, setTrigger] = useState<Trigger | null>(null)
@@ -97,6 +75,8 @@ export function FlowBuilder() {
     await fetch("api/workflows", {
       method: "POST",
       body: JSON.stringify({
+        address: "myaddress",
+        name: "my workflow",
         trigger: trigger,
         steps: steps,
       }),

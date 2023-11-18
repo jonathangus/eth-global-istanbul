@@ -20,7 +20,7 @@ export const ActionItem = ({
   const [isHovered, setisHovered] = useState(false)
 
   const handleDropdownChange = (newValue: string) => {
-    onChange({ ...step, type: newValue })
+    onChange({ ...step, config: { ...step.config, type: newValue } })
   }
 
   const handleRemoveStep = () => {
@@ -28,8 +28,16 @@ export const ActionItem = ({
   }
 
   const tokenOptions = [
-    { value: "PUSH_SLACK", label: "push notif", image: "/icons/ape.svg" },
-    { value: "1inch", label: "swap 1inch", image: "/icons/1inch-logo.svg" },
+    {
+      value: "SEND_PUSH_PROTOCOL",
+      label: "push notif",
+      image: "/icons/ape.svg",
+    },
+    {
+      value: "SEND_SLACK_MESSAGE",
+      label: "swap 1inch",
+      image: "/icons/1inch-logo.svg",
+    },
   ]
 
   return (
@@ -48,7 +56,7 @@ export const ActionItem = ({
       )}
       <div className="flex w-full rounded-t-md bg-white h-1/3 py-4">
         <TokenSelect
-          value={step.type}
+          value={step.config.type}
           onChange={handleDropdownChange}
           options={tokenOptions}
         />

@@ -24,20 +24,26 @@ export const TriggerItem = ({
   }
 
   const handleTokenChange = (newValue: string) => {
-    onChange({ ...trigger, address: newValue })
+    onChange({ ...trigger, token: { ...trigger.token, address: newValue } })
   }
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ ...trigger, address: e.target.value })
+    onChange({
+      ...trigger,
+      token: { ...trigger.token, address: e.target.value },
+    })
   }
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ ...trigger, amount: parseInt(e.target.value) })
+    onChange({
+      ...trigger,
+      token: { ...trigger.token, amount: parseInt(e.target.value) },
+    })
   }
 
   const dropdownOptions = [
-    { value: "tokenReceived", label: "on tokens received erc-20" },
-    { value: "nftReceived", label: "on tokens received erc-721" },
+    { value: "TOKENS_RECEIVED", label: "on tokens received erc-20" },
+    { value: "NFT_RECEIVED", label: "on tokens received erc-721" },
   ]
 
   const tokenOptions = [
@@ -61,10 +67,10 @@ export const TriggerItem = ({
         </div>
       )}
       <div className="flex w-full rounded-t-md bg-white h-1/3 py-4">
-        {trigger.type === "tokenReceived" && (
+        {trigger.type === "TOKENS_RECEIVED" && (
           <div className="flex w-1/4">
             <TokenSelect
-              value={trigger.address}
+              value={trigger.token.address}
               onChange={handleTokenChange}
               options={tokenOptions}
             />
@@ -86,7 +92,7 @@ export const TriggerItem = ({
         <input
           className="w-full rounded-md px-3 py-2"
           onChange={handleAddressChange}
-          value={trigger.address || ""}
+          value={trigger.token.address || ""}
         />
         <div className="py-3">
           <p>Received amount</p>
@@ -96,7 +102,7 @@ export const TriggerItem = ({
           className="w-full rounded-md px-3 py-2"
           type="number"
           onChange={handleAmountChange}
-          value={trigger.amount || 0}
+          value={trigger.token.amount || 0}
         />
       </div>
     </div>
