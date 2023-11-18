@@ -3,5 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gray-100;
+  background-color: #f3f3f3; /* Light gray background color */
+  background-image: url("/icons/dot.svg"); /* Path to your SVG file */
+  background-repeat: repeat; /* Repeat the background image */
 }

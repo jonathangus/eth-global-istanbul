@@ -3,6 +3,12 @@
 import React, { useState } from "react"
 import { TriggerItem } from "./trigger-item"
 import { ActionItem } from "./action-item"
+import { DownArrow } from "./icons/down-arrow"
+import {
+  stepsInsertSchema,
+  workflowsInsertSchema,
+} from "../../database.schemas"
+import { z } from "zod"
 
 const Initialtrigger = {
   id: "trigger-1",
@@ -13,8 +19,8 @@ const Initialtrigger = {
 }
 
 const InitialStep = {
-  id: "step-1",
-  type: "type1",
+  id: "1",
+  type: "1inch",
   content: "step 1",
 }
 
@@ -31,6 +37,36 @@ export type Step = {
   type: string
   content: string
 }
+
+// const Initialtrigger = {
+//   id: "1",
+//   created_at: "",
+//   address: "",
+//   name: "on tokens received erc-20",
+//   trigger: {
+//     id: "1",
+//     type: "tokenReceived",
+//     content: "on tokens received erc-20",
+//     address: "0x12323243412328",
+//     amount: 100,
+//   },
+// }
+
+// const InitialStep = {
+//   config: {
+//     amount: 100,
+//     from: "0x12323243412328",
+//     to: "0x12323243412328",
+//   },
+//   created_at: "",
+//   id: "1",
+//   order: 1,
+//   type: "1inch",
+//   workflow_id: 1,
+// }
+
+// type Trigger = z.infer<typeof workflowsInsertSchema>
+// type Step = z.infer<typeof stepsInsertSchema>
 
 export function FlowBuilder() {
   const [trigger, setTrigger] = useState<Trigger | null>(null)
@@ -68,17 +104,34 @@ export function FlowBuilder() {
   }
 
   return (
-    <div className="w-full h-full flex justify-center">
+    <div className="w-full h-full flex justify-center py-20">
       <div className="flex flex-col items-center gap-4">
-        {trigger !== null && (
+        {trigger && (
           <TriggerItem
             trigger={trigger}
             onRemoveTrigger={() => setTrigger(null)}
             onChange={(updatedTrigger: Trigger) => setTrigger(updatedTrigger)}
           />
         )}
+
         {steps.map((step: any) => (
-          <ActionItem key={step.id} step={step} onRemoveStep={onRemoveStep} />
+          <>
+            <DownArrow />
+            <ActionItem
+              key={step.id}
+              step={step}
+              onRemoveStep={onRemoveStep}
+              onChange={(updatedStep: Step) => {
+                const updatedSteps = steps.map((s) => {
+                  if (s.id === updatedStep.id) {
+                    return updatedStep
+                  }
+                  return s
+                })
+                setSteps(updatedSteps)
+              }}
+            />
+          </>
         ))}
 
         <button
