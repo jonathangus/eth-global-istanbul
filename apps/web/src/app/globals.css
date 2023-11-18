@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: #f3f3f3; /* Light gray background color */
+  background-image: url("/icons/dot.svg"); /* Path to your SVG file */
+  background-repeat: repeat; /* Repeat the background image */
+}

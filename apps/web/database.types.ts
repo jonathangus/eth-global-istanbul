@@ -14,6 +14,7 @@ export interface Database {
           config: Json
           created_at: string
           id: number
+          order: number
           type: string
           workflow_id: number
         }
@@ -21,6 +22,7 @@ export interface Database {
           config: Json
           created_at?: string
           id?: number
+          order: number
           type: string
           workflow_id: number
         }
@@ -28,6 +30,7 @@ export interface Database {
           config?: Json
           created_at?: string
           id?: number
+          order?: number
           type?: string
           workflow_id?: number
         }

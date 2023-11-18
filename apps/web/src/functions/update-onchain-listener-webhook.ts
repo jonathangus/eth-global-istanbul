@@ -1,4 +1,4 @@
-import { alchemyBase } from "../lib/alchemy";
+import { alchemyBase, alchemyGoerli } from "../lib/alchemy";
 import { inngest } from "../lib/inngest";
 
 export const updateOnchainListenerWebhook = inngest.createFunction(
@@ -6,7 +6,7 @@ export const updateOnchainListenerWebhook = inngest.createFunction(
   { event: "app/workflow.created" },
   async ({ event, step }) => {
     await step.run("Create Listener", async () => {
-      await alchemyBase.notify.updateWebhook(
+      await alchemyGoerli.notify.updateWebhook(
         process.env.ALCHEMY_GOERLI_WEBHOOK_ID as string,
         {
           addAddresses: [event.data.address],

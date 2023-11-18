@@ -1,7 +1,8 @@
 import { NonRetriableError } from "inngest";
-import { stepConfigSchema } from "../../schemas";
+import { stepActionConfig } from "../../schemas";
 import { inngest } from "../lib/inngest";
 import { supabase } from "../lib/supabase";
+import { runStepAction } from "../lib/run-step-action";
 
 export const runWorkflow = inngest.createFunction(
   { id: "run-workflow" },
@@ -11,7 +12,8 @@ export const runWorkflow = inngest.createFunction(
       const { error, data } = await supabase
         .from("steps")
         .select()
-        .eq("workflow_id", event.data.workflowId);
+        .eq("workflow_id", event.data.workflowId)
+        .order("order");
 
       if (error) {
         console.error("Failed to get workflow steps", error);
@@ -26,17 +28,10 @@ export const runWorkflow = inngest.createFunction(
     });
 
     for (const workflowStep of workflowSteps) {
+      console.info("Running step", { step: workflowStep });
       await step.run(`Run step ${workflowStep.id}`, async () => {
-        const action = stepConfigSchema.parse(workflowStep.config);
-
-        switch (action.type) {
-          case "SEND_PUSH_PROTOCOL":
-            return console.log("Send push protocol");
-          case "SEND_SLACK_MESSAGE":
-            return console.log("Send slack message");
-          default:
-            throw new NonRetriableError(`Unknown action type`);
-        }
+        const action = stepActionConfig.parse(workflowStep.config);
+        await runStepAction(action);
       });
     }
 

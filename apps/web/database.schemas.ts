@@ -18,6 +18,7 @@ export const stepsRowSchema = z.object({
   config: jsonSchema,
   created_at: z.string(),
   id: z.number(),
+  order: z.number(),
   type: z.string(),
   workflow_id: z.number(),
 });
@@ -26,6 +27,7 @@ export const stepsInsertSchema = z.object({
   config: jsonSchema,
   created_at: z.string().optional(),
   id: z.number().optional(),
+  order: z.number(),
   type: z.string(),
   workflow_id: z.number(),
 });
@@ -34,6 +36,7 @@ export const stepsUpdateSchema = z.object({
   config: jsonSchema.optional(),
   created_at: z.string().optional(),
   id: z.number().optional(),
+  order: z.number().optional(),
   type: z.string().optional(),
   workflow_id: z.number().optional(),
 });

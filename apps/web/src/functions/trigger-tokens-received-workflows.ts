@@ -1,4 +1,4 @@
-import { TRIGGER_TYPE } from "../../schemas";
+import { TRIGGER_TYPE, workflowTriggerSchema } from "../../schemas";
 import { inngest } from "../lib/inngest";
 import { supabase } from "../lib/supabase";
 
@@ -10,11 +10,8 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
       const { error, data } = await supabase
         .from("workflows")
         .select()
-        .eq("address", event.data.toAddress)
-        .contains("trigger", {
-          type: TRIGGER_TYPE.TOKENS_RECEIVED,
-          tokenAddress: event.data.token.address,
-        });
+        .eq("address", event.data.toAddress.toLowerCase())
+        .eq("trigger->>type", TRIGGER_TYPE.TOKENS_RECEIVED);
 
       if (error) {
         console.error("Failed to get workflows", error);
@@ -22,14 +19,26 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
       }
 
       if (!data) {
+        console.info("No workflows found");
         return [];
       }
 
-      return data.filter(
-        (workflow) =>
-          Number((workflow.trigger as any).tokenAmount) >=
-          event.data.token.amount
-      );
+      return data.filter((workflow) => {
+        try {
+          const trigger = workflowTriggerSchema.parse(workflow.trigger);
+          const conditions: Array<boolean> = [];
+
+          conditions.push(trigger.token.address === event.data.token.address);
+
+          if (trigger.token.amount) {
+            conditions.push(trigger.token.amount <= event.data.token.amount);
+          }
+
+          return conditions.every((condition) => condition);
+        } catch {
+          return false;
+        }
+      });
     });
 
     const events = workflows.map((workflow) => {
@@ -41,6 +50,7 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
 
     if (events.length > 0) {
       await step.sendEvent("fan-out-workflows-runs", events);
+      console.info("Workflows triggered", events);
     }
 
     return { count: events.length };

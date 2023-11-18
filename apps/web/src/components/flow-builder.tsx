@@ -1,80 +1,144 @@
 "use client"
 
 import React, { useState } from "react"
-import { FlowItem } from "./flow-item"
+import { TriggerItem } from "./trigger-item"
+import { ActionItem } from "./action-item"
+import { DownArrow } from "./icons/down-arrow"
+import {
+  stepsInsertSchema,
+  workflowsInsertSchema,
+} from "../../database.schemas"
+import { TypeOf, z } from "zod"
+import { stepConfigSchema, workflowTriggerSchema } from "../../schemas"
+import { randomUUID } from "crypto"
+
+const Initialtrigger = {
+  type: "TOKENS_RECEIVED",
+  token: {
+    name: "usdc",
+    address: "0x12323243412328",
+    amount: 10,
+  },
+}
+
+const InitialStep = {
+  config: {
+    type: "SEND_PUSH_PROTOCOL",
+    foo: "blablba",
+  },
+  created_at: "",
+  id: 1,
+  order: 1,
+  type: "action",
+  workflow_id: 1,
+}
+
+export type Trigger = z.infer<typeof workflowTriggerSchema>
+
+export type Step = {
+  config: {
+    type: string
+    foo: string
+  }
+  created_at?: string
+  id: number
+  order: number
+  type: string
+  workflow_id: number
+}
+
+let stepIdCounter = 1
 
 export function FlowBuilder() {
-  const [children, setChildren] = useState<React.ReactNode[]>([])
-  const [showModal, setShowModal] = useState(false)
-  const [childType, setChildType] = useState("")
+  const [trigger, setTrigger] = useState<Trigger | null>(null)
+  const [steps, setSteps] = useState<Step[]>([])
+
+  const addTrigger = (newTrigger: Trigger) => {
+    setTrigger(newTrigger)
+  }
+
+  const addStep = (newStep: Step) => {
+    const stepWithId = { ...newStep, id: stepIdCounter++ }
+    setSteps([...steps, stepWithId])
+  }
+
+  const onRemoveStep = (stepToRemove: Step) => {
+    const updatedSteps = steps
+      .filter((step) => step.id !== stepToRemove.id)
+      .map((step, index) => ({ ...step, order: index + 1 }))
+
+    setSteps(updatedSteps)
+  }
 
   const addChild = () => {
-    const newChild = (
-      <FlowItem
-        key={children.length}
-        type={childType}
-        content={`Child ${children.length + 1}`}
-      />
-    )
-    setChildren([...children, newChild])
-    setShowModal(false)
+    if (!trigger) {
+      addTrigger(Initialtrigger)
+    } else {
+      addStep({
+        ...InitialStep,
+        order: steps.length + 1,
+        workflow_id: 1,
+      })
+    }
+  }
+
+  const deployFlow = async () => {
+    console.log("deploy flow")
+    await fetch("api/workflows", {
+      method: "POST",
+      body: JSON.stringify({
+        address: "myaddress",
+        name: "my workflow",
+        trigger: trigger,
+        steps: steps,
+      }),
+    })
   }
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="flex flex-col items-center">
-        {children}
+    <div className="w-full h-full flex justify-center py-20">
+      <div className="flex flex-col items-center gap-4">
+        {trigger && (
+          <TriggerItem
+            trigger={trigger}
+            onRemoveTrigger={() => setTrigger(null)}
+            onChange={(updatedTrigger: Trigger) => setTrigger(updatedTrigger)}
+          />
+        )}
+
+        {steps.map((step: any) => (
+          <>
+            <DownArrow />
+            <ActionItem
+              key={step.id}
+              step={step}
+              onRemoveStep={onRemoveStep}
+              onChange={(updatedStep: Step) => {
+                const updatedSteps = steps.map((s) => {
+                  if (s.id === updatedStep.id) {
+                    return updatedStep
+                  }
+                  return s
+                })
+                setSteps(updatedSteps)
+              }}
+            />
+          </>
+        ))}
+
         <button
-          onClick={() => setShowModal(true)}
+          onClick={addChild}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
         >
-          Add
+          {trigger ? "Add Action" : "Add Trigger"}
         </button>
-
-        {showModal && (
-          <div className="absolute w-[30vw] h-[30vh] bg-white flex border-2 border-black">
-            <div className="">
-              <h4>Select Child Type</h4>
-              <div className="w-full flex">
-                <button
-                  onClick={() => setChildType("trigger")}
-                  className={`p-4 border-2 ${
-                    childType === "trigger"
-                      ? "bg-blue-500 text-white"
-                      : "bg-white border-black"
-                  }`}
-                >
-                  trigger
-                </button>
-                <button
-                  onClick={() => setChildType("condition")}
-                  className={`p-4 border-2 ${
-                    childType === "condition"
-                      ? "bg-blue-500 text-white"
-                      : "bg-white border-black"
-                  }`}
-                >
-                  condition
-                </button>
-                <button
-                  onClick={() => setChildType("action")}
-                  className={`p-4 border-2 ${
-                    childType === "action"
-                      ? "bg-blue-500 text-white"
-                      : "bg-white border-black"
-                  }`}
-                >
-                  action
-                </button>
-              </div>
-              <button
-                onClick={addChild}
-                className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
-              >
-                Add Child
-              </button>
-            </div>
-          </div>
+        {trigger && steps.length > 0 && (
+          <button
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            onClick={deployFlow}
+          >
+            deploy flow
+          </button>
         )}
       </div>
     </div>
