@@ -51,12 +51,6 @@ const buildTx = async ({
     args: [to, value, data],
   });
 
-  console.log({
-    callData,
-    data,
-    value,
-    to,
-  });
   const gasPrice = await bundlerClient.getUserOperationGasPrice();
 
   const userOperation = {
@@ -144,7 +138,6 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     ENTRY_POINT_ADDRESS,
     chainId,
   } = useChain();
-  const value = {};
   const [completedSteps, setCompletedSteps] = useState([]);
 
   const { mutate: saveSteps, isLoading: isSaving } = useMutation(
