@@ -11,26 +11,29 @@ export interface Database {
     Tables: {
       steps: {
         Row: {
-          config: Json
+          action: Json
           created_at: string
           id: number
           order: number
+          tx_sign_data: Json | null
           type: string
           workflow_id: number
         }
         Insert: {
-          config: Json
+          action: Json
           created_at?: string
           id?: number
           order: number
+          tx_sign_data?: Json | null
           type: string
           workflow_id: number
         }
         Update: {
-          config?: Json
+          action?: Json
           created_at?: string
           id?: number
           order?: number
+          tx_sign_data?: Json | null
           type?: string
           workflow_id?: number
         }

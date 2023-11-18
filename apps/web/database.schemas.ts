@@ -15,28 +15,31 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
 );
 
 export const stepsRowSchema = z.object({
-  config: jsonSchema,
+  action: jsonSchema,
   created_at: z.string(),
   id: z.number(),
   order: z.number(),
+  tx_sign_data: jsonSchema.nullable(),
   type: z.string(),
   workflow_id: z.number(),
 });
 
 export const stepsInsertSchema = z.object({
-  config: jsonSchema,
+  action: jsonSchema,
   created_at: z.string().optional(),
   id: z.number().optional(),
   order: z.number(),
+  tx_sign_data: jsonSchema.optional().nullable(),
   type: z.string(),
   workflow_id: z.number(),
 });
 
 export const stepsUpdateSchema = z.object({
-  config: jsonSchema.optional(),
+  action: jsonSchema.optional(),
   created_at: z.string().optional(),
   id: z.number().optional(),
   order: z.number().optional(),
+  tx_sign_data: jsonSchema.optional().nullable(),
   type: z.string().optional(),
   workflow_id: z.number().optional(),
 });

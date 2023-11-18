@@ -1,8 +1,7 @@
-import { NonRetriableError } from "inngest";
-import { stepActionConfig } from "../../schemas";
+import { workflowStepSchema } from "../../schemas";
 import { inngest } from "../lib/inngest";
-import { supabase } from "../lib/supabase";
 import { runStepAction } from "../lib/run-step-action";
+import { supabase } from "../lib/supabase";
 
 export const runWorkflow = inngest.createFunction(
   { id: "run-workflow" },
@@ -30,8 +29,7 @@ export const runWorkflow = inngest.createFunction(
     for (const workflowStep of workflowSteps) {
       console.info("Running step", { step: workflowStep });
       await step.run(`Run step ${workflowStep.id}`, async () => {
-        const action = stepActionConfig.parse(workflowStep.config);
-        await runStepAction(action);
+        await runStepAction(workflowStepSchema.parse(workflowStep));
       });
     }
 

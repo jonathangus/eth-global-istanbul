@@ -1,14 +1,14 @@
-import { bundlerActions } from 'permissionless';
+import { bundlerActions } from "permissionless";
 import {
   pimlicoBundlerActions,
   pimlicoPaymasterActions,
-} from 'permissionless/actions/pimlico';
-import { createClient, createPublicClient, http, Chain } from 'viem';
-import { lineaTestnet, baseGoerli } from 'viem/chains';
+} from "permissionless/actions/pimlico";
+import { createClient, createPublicClient, http, Chain } from "viem";
+import { lineaTestnet, baseGoerli } from "viem/chains";
 
 const apiKey = process.env.NEXT_PUBLIC_YOUR_PIMLICO_API_KEY;
 
-const lineaTestnetName = 'linea-testnet';
+const lineaTestnetName = "linea-testnet";
 
 const createBundlerClient = (name: string, chain: Chain) =>
   createClient({
@@ -19,8 +19,8 @@ const createBundlerClient = (name: string, chain: Chain) =>
     .extend(pimlicoBundlerActions);
 
 export const BUNDLER_CLIENT = {
-  [lineaTestnet.id]: createBundlerClient('linea-testnet', lineaTestnet),
-  [baseGoerli.id]: createBundlerClient('base-goerli', lineaTestnet),
+  [lineaTestnet.id]: createBundlerClient("linea-testnet", lineaTestnet),
+  [baseGoerli.id]: createBundlerClient("base-goerli", lineaTestnet),
 };
 
 const getPaymasterClient = (name: string, chain: Chain) =>
@@ -30,15 +30,15 @@ const getPaymasterClient = (name: string, chain: Chain) =>
   }).extend(pimlicoPaymasterActions);
 
 export const PAYMASTER_CLIENT = {
-  [lineaTestnet.id]: getPaymasterClient('linea-testnet', lineaTestnet),
+  [lineaTestnet.id]: getPaymasterClient("linea-testnet", lineaTestnet),
 };
 
 const getPublicClient = (name: string, chain: Chain) =>
   createPublicClient({
-    transport: http('https://rpc.goerli.linea.build/'),
+    transport: http("https://rpc.goerli.linea.build/"),
     chain: lineaTestnet,
   });
 
 export const PUBLIC_CLIENT = {
-  [lineaTestnet.id]: getPublicClient('linea-testnet', lineaTestnet),
+  [lineaTestnet.id]: getPublicClient("linea-testnet", lineaTestnet),
 };
