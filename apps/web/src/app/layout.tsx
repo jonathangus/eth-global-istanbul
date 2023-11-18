@@ -1,13 +1,13 @@
-'use client';
-import './globals.css';
-import { Inter } from 'next/font/google';
-import { PermissionlessContextProvider } from '../context/permissionless-context';
-import { PassKeyContextProvider } from '../context/passkey-context';
-import { WagmiConfig, createConfig, configureChains, mainnet } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import { lineaTestnet } from 'viem/chains';
-import { PaymasterContextProvider } from '../context/paymaster-context';
-import { UiContextProvider } from '../context/ui-context';
+"use client";
+import "./globals.css";
+import { Inter } from "next/font/google";
+import { PermissionlessContextProvider } from "../context/permissionless-context";
+import { PassKeyContextProvider } from "../context/passkey-context";
+import { WagmiConfig, createConfig, configureChains, mainnet } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+import { lineaTestnet } from "viem/chains";
+import { PaymasterContextProvider } from "../context/paymaster-context";
+import { UiContextProvider } from "../context/ui-context";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [lineaTestnet],
@@ -20,7 +20,7 @@ const config = createConfig({
   webSocketPublicClient,
 });
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
