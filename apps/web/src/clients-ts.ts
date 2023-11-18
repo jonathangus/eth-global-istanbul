@@ -12,21 +12,7 @@ import {
   pimlicoBundlerActions,
   pimlicoPaymasterActions,
 } from 'permissionless/actions/pimlico';
-import {
-  Address,
-  Hash,
-  concat,
-  createClient,
-  createPublicClient,
-  encodeFunctionData,
-  http,
-  Hex,
-} from 'viem';
-import {
-  generatePrivateKey,
-  privateKeyToAccount,
-  signMessage,
-} from 'viem/accounts';
+import { createClient, createPublicClient, http } from 'viem';
 import { lineaTestnet, polygonMumbai } from 'viem/chains';
 
 const apiKey = process.env.NEXT_PUBLIC_YOUR_PIMLICO_API_KEY; // REPLACE THIS
@@ -47,7 +33,6 @@ export const BUNDLER_CLIENT = {
 };
 
 const lineaPaymasterClient = createClient({
-  // ⚠️ using v2 of the API ⚠️
   transport: http(
     `https://api.pimlico.io/v2/${lineaTestnetName}/rpc?apikey=${apiKey}`
   ),
