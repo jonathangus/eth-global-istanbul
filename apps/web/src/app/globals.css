@@ -72,7 +72,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     background-color: #f9f9f9; /* Light gray background color */
     background-image: url("/icons/dot.svg"); /* Path to your SVG file */
     background-repeat: repeat; /* Repeat the background image */

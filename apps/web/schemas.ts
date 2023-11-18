@@ -64,7 +64,7 @@ export const stepTxSignDataSchema = z.object({
 })
 
 export const workflowStepSchema = stepsRowSchema.extend({
-  tx_sign_data: stepTxSignDataSchema.nullable(),
+  tx_sign_data: stepTxSignDataSchema.partial().nullable().optional(),
   action: stepActionConfig,
 })
 
