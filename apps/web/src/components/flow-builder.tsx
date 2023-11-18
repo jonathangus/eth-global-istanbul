@@ -12,6 +12,9 @@ import { DownArrow } from "./icons/down-arrow";
 import { TriggerItem } from "./trigger-item";
 import { useRouter } from "next/navigation";
 import { Button } from "../app/components/ui/button";
+import { useAA } from "../context/permissionless-context";
+import { usepassKeyContext } from "../context/passkey-context";
+import { useChain } from "../hooks/use-chain";
 
 const Initialtrigger = {
   type: "TOKENS_RECEIVED",
@@ -45,7 +48,7 @@ export function FlowBuilder() {
   const [trigger, setTrigger] = useState<Trigger | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
 
-  const addStepButtonRef = useRef<HTMLButtonElement>();
+  const addStepButtonRef = useRef<HTMLButtonElement>(null);
 
   const addTrigger = (newTrigger: Trigger) => {
     setTrigger(newTrigger);
@@ -71,22 +74,22 @@ export function FlowBuilder() {
 
   const router = useRouter();
 
+  const { account } = usepassKeyContext();
+  const { createWorkflow, isSaving, completedSteps } = useAA();
+
   const deployFlow = async () => {
     console.log("deploy flow");
-    const response = await fetch("/api/workflows", {
-      method: "POST",
-      body: JSON.stringify({
-        address: "myaddress",
-        name: "my workflow",
-        trigger: trigger,
-        steps: steps,
-      }),
+    const workflow = await createWorkflow({
+      address: account.address,
+      name: "my workflow",
+      trigger: trigger,
+      steps: steps,
     });
 
-    const json = await response.json();
-
-    router.push(`/workflows/${json.id}`);
+    router.push(`/workflows/${workflow.id}`);
   };
+
+  const { chainId } = useChain();
 
   return (
     <div className="flex flex-col items-center">
@@ -98,14 +101,14 @@ export function FlowBuilder() {
         />
       )}
 
-      {steps.map((step: any) => (
+      {steps.map((step) => (
         <>
           <div className="h-24 relative">
             <DownArrow />
             <div className="w-[2px] h-full  bg-gray-300" />
           </div>
           <ActionItem
-            trigger={trigger}
+            isSigned={completedSteps.includes(step.order)}
             key={step.id}
             step={step}
             onRemoveStep={onRemoveStep}
@@ -138,7 +141,7 @@ export function FlowBuilder() {
                 order: steps.length + 1,
                 action: {
                   type: ACTIONS.SWAP_ON_1INCH,
-                  chainId: 1,
+                  chainId,
                   fromToken: {
                     address: "0x0",
                   },
@@ -156,7 +159,9 @@ export function FlowBuilder() {
         )}
 
         {trigger && steps.length > 0 && (
-          <Button onClick={deployFlow}>Deploy Flow</Button>
+          <Button onClick={deployFlow}>
+            {isSaving ? "Saving..." : "Deploy flow"}
+          </Button>
         )}
       </div>
     </div>

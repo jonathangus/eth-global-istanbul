@@ -1,13 +1,17 @@
-import { z } from 'zod';
-import { stepsRowSchema } from './database.schemas';
+import { z } from "zod";
+import {
+  stepsInsertSchema,
+  stepsRowSchema,
+  workflowsInsertSchema,
+} from "./database.schemas";
 
 export const TRIGGER_TYPE = {
-  TOKENS_RECEIVED: 'TOKENS_RECEIVED',
+  TOKENS_RECEIVED: "TOKENS_RECEIVED",
 };
 
 export const ACTIONS = {
-  SEND_PUSH_PROTOCOL_NOTIFICATION: 'SEND_PUSH_PROTOCOL_NOTIFICATION',
-  SWAP_ON_1INCH: 'SWAP_ON_1INCH',
+  SEND_PUSH_PROTOCOL_NOTIFICATION: "SEND_PUSH_PROTOCOL_NOTIFICATION",
+  SWAP_ON_1INCH: "SWAP_ON_1INCH",
 } as const;
 
 export const pushProtocolActionConfigSchema = z.object({
@@ -63,7 +67,18 @@ export const workflowStepSchema = stepsRowSchema.extend({
 });
 
 export const STEP_RUN_STATUS = {
-  PENDING: 'PENDING',
-  RUNNING: 'RUNNING',
-  COMPLETED: 'COMPLETED',
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  COMPLETED: "COMPLETED",
 } as const;
+
+export const createWorkflowSchema = workflowsInsertSchema
+  .omit({ id: true, created_at: true })
+  .extend({
+    steps: z.array(
+      stepsInsertSchema
+        .omit({ workflow_id: true })
+        .extend({ action: stepActionConfig })
+    ),
+    trigger: workflowTriggerSchema,
+  });

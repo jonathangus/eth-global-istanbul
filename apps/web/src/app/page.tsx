@@ -58,7 +58,11 @@ export default function Page(): JSX.Element {
             Register
             {isRegistering && <Loader className="w-4 h-4 animate-spin ml-2" />}
           </Button>
-          <Button disabled={!privateKeyId} onClick={login}>
+          <Button
+            disabled={!privateKeyId}
+            onClick={login}
+            variant={!privateKeyId ? "outline" : "default"}
+          >
             Login
             {isLoggingIn && <Loader className="w-4 h-4 animate-spin ml-2" />}
           </Button>

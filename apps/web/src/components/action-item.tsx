@@ -30,17 +30,16 @@ import {
 } from "../app/components/ui/popover";
 
 type ActionItemProps = {
-  trigger: Trigger | null;
   step: Step;
   onChange: (step: Step) => void;
   onRemoveStep: (step: Step) => void;
+  isSigned?: boolean;
 };
 
 export const ActionItem = ({
   step,
   onChange,
   onRemoveStep,
-  trigger,
 }: ActionItemProps) => {
   const handleDropdownChange = (newValue: string) => {
     onChange({ ...step, action: { ...step.action, type: newValue } });
