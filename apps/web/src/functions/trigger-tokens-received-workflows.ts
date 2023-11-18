@@ -11,7 +11,7 @@ export const triggerTokensReceivedWorkflows = inngest.createFunction(
         .from("workflows")
         .select()
         .eq("address", event.data.toAddress.toLowerCase())
-        .eq("trigger->>type", TRIGGER_TYPE.TOKENS_RECEIVED);
+        .eq("trigger->>type", TRIGGER_TYPE.TOKENS_RECEIVED_ERC20);
 
       if (error) {
         console.error("Failed to get workflows", error);

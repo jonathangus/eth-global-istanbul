@@ -13,13 +13,26 @@ function getAlchemy(chainId: number) {
   }
 }
 
+function getAlchemyWebhookId(chainId: number) {
+  switch (chainId) {
+    case baseGoerli.id:
+      return process.env.ALCHEMY_BASE_GOERLI_WEBHOOK_ID as string;
+    case goerli.id:
+      return process.env.ALCHEMY_GOERLI_WEBHOOK_ID as string;
+    default:
+      throw new Error("Invalid chainId");
+  }
+}
+
 export const updateOnchainListenerWebhook = inngest.createFunction(
   { id: "update-onchain-listener-webhook", name: "Update Address Listener" },
   { event: "app/workflow.created" },
   async ({ event, step }) => {
     await step.run("Create Listener", async () => {
-      await getAlchemy(event.data.chainId).notify.updateWebhook(
-        process.env.ALCHEMY_GOERLI_WEBHOOK_ID as string,
+      const alchemy = getAlchemy(event.data.chainId);
+
+      await alchemy.notify.updateWebhook(
+        getAlchemyWebhookId(event.data.chainId),
         {
           addAddresses: [event.data.address],
         }

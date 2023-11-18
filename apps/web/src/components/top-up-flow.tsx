@@ -12,7 +12,6 @@ export function TopupFlo({ address }: { address: string }) {
       merchantId: "0f2f9ecc-0da6-4760-bf2e-6b5a7fe797cd",
       displayMode: GateFiDisplayModeEnum.Overlay,
       nodeSelector: "#gatefi-button",
-      // TODO: replace with AA wallet address
       walletAddress: address,
       isSandbox: true,
     });
