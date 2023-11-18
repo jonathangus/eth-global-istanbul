@@ -12,9 +12,15 @@ import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import "@account-abstraction/contracts/core/BaseAccount.sol";
 import "@account-abstraction/contracts/samples/callback/TokenCallbackHandler.sol";
 
-import "./SessionManager.sol";
+import "./MoreComplexSessionManager.sol";
 
-contract ComplexAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeable, Initializable, SessionManager {
+contract MoreComplexAccount is
+    BaseAccount,
+    TokenCallbackHandler,
+    UUPSUpgradeable,
+    Initializable,
+    MoreComplexSessionManager
+{
     using ECDSA for bytes32;
 
     address public owner;
@@ -66,7 +72,7 @@ contract ComplexAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeable, I
             require(dest == allowedDest, "SM: Forbidden target");
             require(keccak256(func) == keccak256(allowedData), "SM: Forbidden calldata");
             if (session.nextStep + 1 >= session.nbSteps) {
-                // _removeSession(msg.sender);
+                _removeSession(msg.sender);
             } else {
                 session.nextStep++;
             }
@@ -88,6 +94,37 @@ contract ComplexAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeable, I
         }
         bool isSession = _requireFromEntryPointOrOwnerOrSessionOwner();
         require(dest.length == func.length && (value.length == 0 || value.length == func.length), "wrong array lengths");
+
+        if (isSession) {
+            Session memory session = sessions[msg.sender];
+
+            require(session.nbSteps != dest.length, "SM: Cannot execute batch different than sessions steps");
+
+            if (value.length == 0) {
+                for (uint256 i = 0; i < dest.length; i++) {
+                    address allowedDest = session.dest[i];
+                    bytes memory allowedData = session.data[i];
+
+                    require(dest[i] == allowedDest, "SM: Forbidden target");
+                    require(keccak256(func[i]) == keccak256(allowedData), "SM: Forbidden calldata");
+
+                    _call(dest[i], 0, func[i]);
+                }
+            } else {
+                for (uint256 i = 0; i < dest.length; i++) {
+                    address allowedDest = session.dest[i];
+                    bytes memory allowedData = session.data[i];
+
+                    require(dest[i] == allowedDest, "SM: Forbidden target");
+                    require(keccak256(func[i]) == keccak256(allowedData), "SM: Forbidden calldata");
+
+                    _call(dest[i], value[i], func[i]);
+                }
+            }
+
+            _removeSession(msg.sender);
+        }
+
         if (value.length == 0) {
             for (uint256 i = 0; i < dest.length; i++) {
                 _call(dest[i], 0, func[i]);
