@@ -7,6 +7,7 @@ import { WagmiConfig, createConfig, configureChains, mainnet } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { lineaTestnet } from 'viem/chains';
 import { UiContextProvider } from '../context/ui-context';
+import { Analytics } from '@vercel/analytics/react';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [lineaTestnet],
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Analytics />
         <WagmiConfig config={config}>
           <UiContextProvider>
             <PassKeyContextProvider>

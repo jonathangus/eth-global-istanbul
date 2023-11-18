@@ -45,6 +45,7 @@
     "@turnkey/api-key-stamper": "0.1.1",
     "@turnkey/viem": "0.2.5",
     "@turnkey/webauthn-stamper": "0.2.0",
+    "@vercel/analytics": "^1.1.1",
     "alchemy-sdk": "^3.0.0",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
