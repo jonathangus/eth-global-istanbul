@@ -13,7 +13,7 @@ import { getSenderAddress } from 'permissionless';
 const stampId =
   process.env.NODE_ENV === 'development'
     ? 'localhost'
-    : 'eth-global-istanbul-web-s3wv.vercel.app';
+    : 'eth-global-istanbul-web-aa.vercel.app';
 const generateRandomBuffer = (): ArrayBuffer => {
   const arr = new Uint8Array(32);
   crypto.getRandomValues(arr);
