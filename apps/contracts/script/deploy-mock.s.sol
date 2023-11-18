@@ -8,7 +8,8 @@ pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 
-import {MockERC20} from "src/MockERC20.sol";
+import {MockERC20} from "mock/MockERC20.sol";
+import {MockERC721} from "mock/MockERC721.sol";
 
 contract DeployMock is Script {
     function run() external {
@@ -18,8 +19,9 @@ contract DeployMock is Script {
         // Start broadcasting transactions
         vm.startBroadcast(deployerPrivateKey);
 
-        // Deploy Implementation Contracts
+        // Deploy Mock Contracts
         new MockERC20();
+        new MockERC721();
 
         vm.stopBroadcast();
     }
