@@ -3,6 +3,9 @@
 import { z } from "zod";
 import { STEP_RUN_STATUS, workflowStepSchema } from "../../schemas";
 import { useWorkflowStepsStatus } from "./workflow-step-status-badge";
+import { Card, CardContent, CardHeader } from "../app/components/ui/card";
+import { Badge } from "../app/components/ui/badge";
+import { Loader } from "lucide-react";
 
 export function WorkflowSteps({
   workflowId,
@@ -22,24 +25,32 @@ export function WorkflowSteps({
         const status = statuses[step.id];
         return (
           <>
-            <article
+            <Card
               key={step.id}
               className={"bg-white border rounded-md overflow-hidden w-full"}
             >
-              <div className="px-4 py-3">
-                {action.type === "SWAP_ON_1INCH" && <div>swap on 1inch</div>}
-              </div>
-              <hr />
-              <div className="px-4 py-1">
-                {status === STEP_RUN_STATUS.PENDING && (
-                  <div className="opacity-25">waiting</div>
-                )}
-                {status === STEP_RUN_STATUS.RUNNING && <div>running...</div>}
-                {status === STEP_RUN_STATUS.COMPLETED && (
-                  <div>completed ✅</div>
-                )}
-              </div>
-            </article>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  {action.type === "SWAP_ON_1INCH" && "Swap on 1inch"}
+                  {status === STEP_RUN_STATUS.PENDING && (
+                    <Badge variant="outline">Pending</Badge>
+                  )}
+                  {status === STEP_RUN_STATUS.RUNNING && (
+                    <Badge variant="secondary">
+                      Running <Loader className="w-3 h-3 ml-2 animate-spin" />
+                    </Badge>
+                  )}
+                  {status === STEP_RUN_STATUS.COMPLETED && (
+                    <Badge
+                      className="bg-green-50 text-green-500"
+                      variant="secondary"
+                    >
+                      Completed
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+            </Card>
             {i < steps.length - 1 && (
               <div className="w-[2px] h-20 bg-gray-200" />
             )}
