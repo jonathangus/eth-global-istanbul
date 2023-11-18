@@ -36,12 +36,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const createSubOrgRequest = body as CreateSubOrgWithPrivateKeyRequest;
 
+  console.log({ body });
   try {
     const turnkeyClient = new TurnkeyClient(
       { baseUrl: process.env.NEXT_PUBLIC_TURNKEY_API_BASE_URL! },
       new ApiKeyStamper({
-        apiPublicKey: process.env.TURNKEY_API_PUBLIC_KEY!,
-        apiPrivateKey: process.env.TURNKEY_API_PRIVATE_KEY!,
+        apiPublicKey: process.env.API_PUBLIC_KEY!,
+        apiPrivateKey: process.env.API_PRIVATE_KEY!,
       })
     );
 

@@ -1,11 +1,13 @@
 'use client';
-import type { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { createContext, useContext, useState } from 'react';
 import { getWebAuthnAttestation, TurnkeyClient } from '@turnkey/http';
 import { createAccount } from '@turnkey/viem';
 import axios from 'axios';
 import { WebauthnStamper } from '@turnkey/webauthn-stamper';
 import { LocalAccount } from 'viem';
+import { useChain } from '../hooks/use-chain';
+import { useMutation } from 'wagmi';
 
 const generateRandomBuffer = (): ArrayBuffer => {
   const arr = new Uint8Array(32);
@@ -32,18 +34,20 @@ export const passKeyContext = createContext<PassKeyContext>(
 );
 
 export function PassKeyContextProvider({ children }: PropsWithChildren) {
-  const [subOrgId, setSubOrgId] = useState<string | null>(() => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('subOrgId');
-  });
-  const [privateKeyId, setPrivateKeyId] = useState<string | null>(() => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('privateKeyId');
-  });
+  const { chainId } = useChain();
+  const [subOrgId, setSubOrgId] = useState<string | null>(null);
+  const [privateKeyId, setPrivateKeyId] = useState<string | null>(null);
+  const [account, setAccount] = useState<LocalAccount>();
 
   const stamper = new WebauthnStamper({
     rpId: 'localhost',
   });
+
+  useEffect(() => {
+    setSubOrgId(localStorage.getItem(`subOrgId-${chainId}`));
+    setPrivateKeyId(localStorage.getItem(`privateKeyId-${chainId}`));
+    setAccount(null);
+  }, [chainId]);
 
   const passkeyHttpClient = new TurnkeyClient(
     {
@@ -78,14 +82,15 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
 
     setPrivateKeyId(response.data['privateKeyId']);
 
-    window.localStorage.setItem('privateKeyId', response.data['privateKeyId']);
+    window.localStorage.setItem(
+      `privateKeyId-${chainId}`,
+      response.data['privateKeyId']
+    );
   };
-
-  const [account, setAccount] = useState<LocalAccount>();
 
   const createSubOrg = async () => {
     const challenge = generateRandomBuffer();
-    const subOrgName = `ETHGlobal Instanbul - ${humanReadableDateTime()}`;
+    const subOrgName = `ETHGlobal Instanbul - ${chainId} -  ${humanReadableDateTime()}`;
     const authenticatorUserId = generateRandomBuffer();
 
     const attestation = await getWebAuthnAttestation({
@@ -118,12 +123,12 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
 
     setSubOrgId(res.data.subOrgId);
 
-    window.localStorage.setItem('subOrgId', res.data.subOrgId);
+    window.localStorage.setItem(`subOrgId-${chainId}`, res.data.subOrgId);
 
     createPrivateKey(res.data.subOrgId);
   };
 
-  const login = async () => {
+  const _login = async () => {
     if (!privateKeyId || !subOrgId) {
       return console.log({ privateKeyId, subOrgId }, 'missing');
     }
@@ -141,18 +146,32 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     setAccount(viemAccount);
   };
 
+  const { mutate: login, isLoading: isLoggingIn } = useMutation(async () =>
+    _login()
+  );
+
+  const { mutate: register, isLoading: isRegistering } = useMutation(async () =>
+    createSubOrg()
+  );
+
   const value = {
     login,
-    register: createSubOrg,
+    isLoggingIn,
+    register,
+    isRegistering,
     account,
   };
 
   return (
     <passKeyContext.Provider value={value}>
+      {isLoggingIn && <div>...is logging in ...</div>}
+      {isRegistering && <div> ... is registering ...</div>}
       {!account && (
         <>
-          {!privateKeyId && <button onClick={createSubOrg}>register</button>}
-          {privateKeyId && <button onClick={login}>login </button>}
+          {!privateKeyId && (
+            <button onClick={() => register()}>register</button>
+          )}
+          {privateKeyId && <button onClick={() => login()}>login </button>}
         </>
       )}
 

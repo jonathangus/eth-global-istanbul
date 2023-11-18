@@ -6,6 +6,8 @@ import { PassKeyContextProvider } from '../context/passkey-context';
 import { WagmiConfig, createConfig, configureChains, mainnet } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { lineaTestnet } from 'viem/chains';
+import { PaymasterContextProvider } from '../context/paymaster-context';
+import { UiContextProvider } from '../context/ui-context';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [lineaTestnet],
@@ -29,11 +31,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <WagmiConfig config={config}>
-          <PassKeyContextProvider>
-            <PermissionlessContextProvider>
-              <>{children}</>
-            </PermissionlessContextProvider>
-          </PassKeyContextProvider>
+          <UiContextProvider>
+            <PassKeyContextProvider>
+              <PermissionlessContextProvider>
+                <PaymasterContextProvider>
+                  <>{children}</>
+                </PaymasterContextProvider>
+              </PermissionlessContextProvider>
+            </PassKeyContextProvider>
+          </UiContextProvider>
         </WagmiConfig>
       </body>
     </html>

@@ -21,7 +21,10 @@ function refineNonNull<T>(
 export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   let signedRequest = body as TSignedRequest;
-
+  console.log({
+    apiPublicKey: process.env.TURNKEY_API_PUBLIC_KEY!,
+    apiPrivateKey: process.env.TURNKEY_API_PRIVATE_KEY!,
+  });
   try {
     const activityResponse = await axios.post(
       signedRequest.url,

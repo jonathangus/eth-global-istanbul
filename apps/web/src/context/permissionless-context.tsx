@@ -1,33 +1,14 @@
 'use client';
 import type { PropsWithChildren } from 'react';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useContext } from 'react';
 import {
   UserOperation,
-  bundlerActions,
   getSenderAddress,
   signUserOperationHashWithECDSA,
 } from 'permissionless';
-import {
-  Address,
-  Hash,
-  concat,
-  createClient,
-  createPublicClient,
-  encodeFunctionData,
-  http,
-  Hex,
-  toBytes,
-} from 'viem';
-import { lineaTestnet } from 'viem/chains';
+import { Address, concat, encodeFunctionData, Hex } from 'viem';
 import { usepassKeyContext } from './passkey-context';
 import { abi as simpleAccountABI } from '../abi/simple-account';
-import { abi as accountFactoryABI } from '../abi/account-factory';
 
 import { useChain } from '../hooks/use-chain';
 import { useMutation } from 'wagmi';
@@ -43,13 +24,11 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     paymasterClient,
     SIMPLE_ACCOUNT_FACTORY_ADDRESS,
     ENTRY_POINT_ADDRESS,
+    chainId,
   } = useChain();
   const value = {};
-
-  const { mutate: execute, isLoading, error } = useMutation(() => _execute());
-
+  const { mutate: execute, isLoading } = useMutation(async () => _execute());
   const { account } = usepassKeyContext();
-
   const _execute = async () => {
     if (!account) {
       return console.warn('missing logged in');
@@ -167,7 +146,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     const signature = await signUserOperationHashWithECDSA({
       account: owner,
       userOperation: sponsoredUserOperation,
-      chainId: lineaTestnet.id,
+      chainId: chainId,
       entryPoint: ENTRY_POINT_ADDRESS,
     });
 
@@ -200,8 +179,6 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
         nonce: Number(userOperation.nonce),
       })
     );
-
-    return;
   };
 
   return (
