@@ -50,6 +50,7 @@ export default function Page(): JSX.Element {
               Login or register your account
             </DialogDescription>
           </DialogHeader>
+          <ChainSelector />
           <Button
             disabled={privateKeyId || isRegistering}
             onClick={register}

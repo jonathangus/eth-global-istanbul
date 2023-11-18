@@ -13,10 +13,11 @@ import { SUPPORTED_CHAINS } from "../config";
 
 export function ChainSelector() {
   const chains = [lineaTestnet, baseGoerli, scrollSepolia, goerli];
-  const { setChainId } = useUIContext();
+  const { setChainId, chainId } = useUIContext();
   return (
     <Select
       onValueChange={(value) => setChainId(Number(value) as SUPPORTED_CHAINS)}
+      value={chainId.toString()}
     >
       <SelectTrigger className="bg-white">
         <SelectValue placeholder="Chain" />
