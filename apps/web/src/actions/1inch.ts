@@ -18,7 +18,7 @@ export const transformWorkflow = (step: any, chainId: number) => {
   };
 };
 
-export const getCallData = async ({chainId}): Promise<Hex> => {
+export const getCallData = async (chainId): Promise<Hex> => {
   // const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
   // const value = 0n;
   // const data = '0x68656c6c6f';
@@ -93,7 +93,7 @@ export const execute = async (
   workflowStep: z.infer<typeof workflowStepSchema>
 ) => {
   const result = await executeTransaction(
-    workflowStep.action.{chainId},
+    workflowStep.action.chainId,
     workflowStep.tx_sign_data!
   );
 
