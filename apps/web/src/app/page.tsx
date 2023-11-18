@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { AvatarFallback } from "@radix-ui/react-avatar";
-import { ChainSelector } from "../components/chain-selector";
-import { FlowBuilder } from "../components/flow-builder";
-import { RegisterFlow } from "../components/register-flow";
-import { usepassKeyContext } from "../context/passkey-context";
-import { useAA } from "../context/permissionless-context";
-import { Avatar, AvatarImage } from "./components/ui/avatar";
-import { Button } from "./components/ui/button";
+import { AvatarFallback } from '@radix-ui/react-avatar';
+import { ChainSelector } from '../components/chain-selector';
+import { FlowBuilder } from '../components/flow-builder';
+import { RegisterFlow } from '../components/register-flow';
+import { usepassKeyContext } from '../context/passkey-context';
+import { useAA } from '../context/permissionless-context';
+import { Avatar, AvatarImage } from './components/ui/avatar';
+import { Button } from './components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -15,26 +15,34 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./components/ui/dialog";
+} from './components/ui/dialog';
 
-import { Loader } from "lucide-react";
-
-// {!account && (
-//   <>
-//     {!privateKeyId && (
-//       <button onClick={() => register()}>register</button>
-//     )}
-//     {privateKeyId && <button onClick={() => login()}>login </button>}
-//   </>
-// )}
+import { Loader } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useChain } from '../hooks/use-chain';
 
 export default function Page(): JSX.Element {
   const aa = useAA();
   const { account, privateKeyId, register, isRegistering, login, isLoggingIn } =
     usepassKeyContext();
+  const { chainId } = useChain();
+
+  const [open, setOpen] = useState();
+
+  useEffect(() => {
+    setOpen(!account);
+  }, [account, chainId]);
+
   return (
     <>
-      <Dialog open={!account}>
+      <Dialog
+        open={open}
+        onOpenChange={(isOpened) => {
+          if (!isOpened) {
+            setOpen(false);
+          }
+        }}
+      >
         <DialogContent className="space-y-1">
           <DialogHeader>
             <DialogTitle>Sign in</DialogTitle>
@@ -45,7 +53,7 @@ export default function Page(): JSX.Element {
           <Button
             disabled={privateKeyId || isRegistering}
             onClick={register}
-            variant={privateKeyId ? "outline" : "default"}
+            variant={privateKeyId ? 'outline' : 'default'}
           >
             Register
             {isRegistering && <Loader className="w-4 h-4 animate-spin ml-2" />}

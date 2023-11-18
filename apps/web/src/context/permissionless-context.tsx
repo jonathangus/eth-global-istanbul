@@ -14,6 +14,7 @@ import { useChain } from '../hooks/use-chain';
 import { useMutation } from 'wagmi';
 import axios from 'axios';
 import { actions, transformers } from '../actions';
+import { executeTransaction } from '../lib/execute-transaction';
 
 interface PermissionlessContext {}
 
@@ -219,6 +220,9 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       } as any);
       setCompletedSteps((prev) => [...prev, step.order]);
       txs.push(tx);
+
+      // const result = await executeTransaction(chainId, tx.tx_sign_data);
+      // console.log('result', );
       console.log(tx);
     }
 
