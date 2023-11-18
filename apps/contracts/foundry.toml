@@ -8,15 +8,15 @@ remappings = [
     ]
 
 [rpc_endpoints]
-linea-testnet = "${LINEA_GOERLI_RPC_URL}"
-base-goerli = "${BASE_GOERLI_RPC_URL}"
-scroll-sepolia = "${SCROLL_SEPOLIA_RPC_URL}"
 goerli = "${GOERLI_RPC_URL}"
+base-goerli = "${BASE_GOERLI_RPC_URL}"
+linea-testnet = "${LINEA_GOERLI_RPC_URL}"
+scroll-sepolia = "${SCROLL_SEPOLIA_RPC_URL}"
 
 [etherscan]
 goerli = { key = "${ETHERSCAN_API_KEY}", chain = 5 }
-base-goerli = { key = "${ETHERSCAN_API_KEY}", chain = 84531, url = "https://api-goerli.basescan.org/api" }
-linea-testnet = { key = "${LINEASCAN_API_KEY}", url = "https://api-testnet.lineascan.build/api" }
+base-goerli = { key = "${ETHERSCAN_API_KEY}", chain = 84531 }
+linea-testnet = { key = "${LINEASCAN_API_KEY}", chain = 59140 }
 scroll-sepolia = { key = "${SCROLLSCAN_API_KEY}", url = "https://api-sepolia.scrollscan.com/api" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -7,6 +7,7 @@ import { set } from "zod"
 import { z } from "zod"
 import {
   ACTIONS,
+  TRIGGER_TYPE,
   VALID_LOGIC_VALUES,
   swapOn1InchConfigSchema,
   tokenSchema,
@@ -23,7 +24,7 @@ import {
   SelectValue,
 } from "../app/components/ui/select"
 import { Separator } from "../app/components/ui/separator"
-import { Step, Trigger } from "./flow-builder"
+import { Trigger } from "./flow-builder"
 
 type TriggerItemProps = {
   trigger: Trigger
@@ -56,11 +57,6 @@ export const TriggerItem = ({ trigger, onChange }: TriggerItemProps) => {
                   image: "/icons/receive.png",
                 },
                 {
-                  value: "UNLIMITED_TOP_UP",
-                  label: "unlimited top up",
-                  image: "/icons/unlimit.svg",
-                },
-                {
                   value: "TOKENS_LEAVE_ERC20",
                   label: "on tokens leave erc-20",
                   image: "/icons/send.png",
@@ -68,7 +64,7 @@ export const TriggerItem = ({ trigger, onChange }: TriggerItemProps) => {
                 {
                   value: "TOKENS_LEAVE_ERC721",
                   label: "on tokens leave erc-721",
-                  image: "/icons/send.jpeg",
+                  image: "/icons/send.png",
                 },
               ].map(({ value, label, image }) => (
                 <SelectItem value={value}>
@@ -84,8 +80,14 @@ export const TriggerItem = ({ trigger, onChange }: TriggerItemProps) => {
       </CardHeader>
       <Separator className="mb-4" />
       <CardContent>
-        {trigger.type && (
+        {trigger.type === TRIGGER_TYPE.TOKENS_RECEIVED_ERC20 ||
+        trigger.type === TRIGGER_TYPE.TOKENS_LEAVE_ERC20 ? (
           <OnTokensReceivedErc20
+            token={trigger.token}
+            onChange={(token) => onChange({ ...trigger, token })}
+          />
+        ) : (
+          <OnTokensReceivedErc721
             token={trigger.token}
             onChange={(token) => onChange({ ...trigger, token })}
           />
@@ -211,6 +213,71 @@ function OnTokensReceivedErc20({
           />
         </Label>
       )}
+      <Label className="space-y-2">
+        <span>Amount</span>
+        <Input
+          placeholder="how many tokens"
+          type="number"
+          value={token.amount || 0}
+          onChange={(e) => {
+            onChange({ ...token, amount: Number(e.target.value) })
+          }}
+        />
+      </Label>
+    </div>
+  )
+}
+
+function OnTokensReceivedErc721({
+  token,
+  onChange,
+}: {
+  onChange: (values: z.infer<typeof tokenSchema>) => void
+  token: z.infer<typeof tokenSchema>
+}) {
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({
+      ...token,
+      address: e.target.value,
+    })
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Label className="space-y-2">
+        <span>address</span>
+        <Input
+          placeholder="Enter The Token Address"
+          type="string"
+          value={token.address}
+          onChange={handleAddressChange}
+        />
+      </Label>
+      <Label className="space-y-2">
+        <span>Logic</span>
+        <Select
+          value={token.logic}
+          onValueChange={(value) =>
+            onChange({
+              ...token,
+              logic:
+                VALID_LOGIC_VALUES[value as keyof typeof VALID_LOGIC_VALUES],
+            })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Logic" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(VALID_LOGIC_VALUES).map((logicValue) => (
+              <SelectItem key={logicValue} value={logicValue}>
+                {logicValue}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Label>
+
       <Label className="space-y-2">
         <span>Amount</span>
         <Input
