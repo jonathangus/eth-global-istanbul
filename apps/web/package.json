@@ -10,6 +10,7 @@
     "gen-types": "npx supabase gen types typescript --project-id msulgytoymccrlhufgok > database.types.ts && npx supabase-to-zod --input database.types.ts --output database.schemas.ts"
   },
   "dependencies": {
+    "@pushprotocol/restapi": "^1.4.38",
     "@supabase/supabase-js": "^2.38.4",
     "@turnkey/api-key-stamper": "0.1.1",
     "@turnkey/http": "^2.3.0",

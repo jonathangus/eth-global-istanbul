@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       steps: z.array(
         stepsInsertSchema
           .omit({ workflow_id: true })
-          .extend({ config: stepActionConfig })
+          .extend({ action: stepActionConfig })
       ),
       trigger: workflowTriggerSchema,
     })
