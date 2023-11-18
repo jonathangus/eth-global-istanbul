@@ -1,3 +1,12 @@
+## 🍅 AA-tomato 🍅
+Demystifying account abstraction – Get ya wallet, all you need is a fingerprint and get access to true Account Abstraction ERC 437. Enables you to automate complex actions based on triggers and conditions in a safe way by remaining in custody.
+
+
+
+
+
+
+
 # Turborepo starter
 
 This is an official starter Turborepo.
