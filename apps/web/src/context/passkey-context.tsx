@@ -27,7 +27,9 @@ const humanReadableDateTime = (): string => {
   return new Date().toLocaleString().replaceAll('/', '-').replaceAll(':', '.');
 };
 
-interface PassKeyContext {}
+interface PassKeyContext {
+  account: any;
+}
 
 export const passKeyContext = createContext<PassKeyContext>(
   {} as PassKeyContext

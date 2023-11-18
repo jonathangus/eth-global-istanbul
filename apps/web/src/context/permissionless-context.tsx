@@ -13,6 +13,7 @@ import { abi as simpleAccountABI } from '../abi/simple-account';
 import { useChain } from '../hooks/use-chain';
 import { useMutation } from 'wagmi';
 import axios from 'axios';
+import { actions, transformers } from '../actions';
 
 interface PermissionlessContext {}
 
@@ -30,26 +31,12 @@ const buildTx = async ({
   aaSenderAddress,
   initCode,
   paymasterClient,
-}) => {
-  const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
-  const value = 0n;
-  const data = '0x68656c6c6f';
-  const callData = encodeFunctionData({
-    abi: [
-      {
-        inputs: [
-          { name: 'dest', type: 'address' },
-          { name: 'value', type: 'uint256' },
-          { name: 'func', type: 'bytes' },
-        ],
-        name: 'execut',
-        outputs: [],
-        stateMutability: 'nonpayable',
-        type: 'function',
-      },
-    ],
-    args: [to, value, data],
-  });
+  step,
+}: any) => {
+  const action = actions['SWAP_ON_1INCH'];
+
+  // TODO
+  const callData = await action(step);
 
   const gasPrice = await bundlerClient.getUserOperationGasPrice();
 
@@ -101,8 +88,6 @@ const buildTx = async ({
     ),
     callGasLimit: Number(sponsorUserOperationResult.callGasLimit),
     paymasterAndData: sponsorUserOperationResult.paymasterAndData,
-    to,
-    data,
     callData,
     initCode: accountExist ? '0x' : initCode,
     sender: aaSenderAddress,
@@ -111,21 +96,13 @@ const buildTx = async ({
     chainId,
   };
 
+  const transform = transformers['SWAP_ON_1INCH'];
+
   return {
     tx_sign_data,
     order: 0,
     type: 'SWAP_ON_1INCH',
-    action: {
-      type: 'SWAP_ON_1INCH',
-      chainId: 1,
-      fromToken: {
-        address: '0x...',
-      },
-      toToken: {
-        address: '0x...',
-      },
-      amount: 10000,
-    },
+    action: transform(step),
   };
 };
 
@@ -226,6 +203,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       },
     ];
     for (let step in steps) {
+      // TODO CHECK IF TX IS NEEDED
       const tx = await buildTx({
         owner: account,
         chainId,
@@ -237,6 +215,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
         bundlerClient,
         paymasterClient,
         initCode,
+        step,
       } as any);
       setCompletedSteps((prev) => [...prev, step.order]);
       txs.push(tx);
