@@ -11,8 +11,6 @@ export async function runStepAction(
   const execute = executions[workflowStep.action.type];
   switch (workflowStep.action.type) {
     case ACTIONS.SWAP_ON_1INCH:
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
       const result = await execute(workflowStep);
 
       if (result.ok) {

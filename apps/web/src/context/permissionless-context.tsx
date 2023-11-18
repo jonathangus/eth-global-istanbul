@@ -121,8 +121,10 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
   const { mutate: saveSteps, isLoading: isSaving } = useMutation(
     async (input) => {
       console.log({ input });
-      await axios.post('/api/workflows', JSON.stringify(input));
-    }
+      const res = await axios.post('/api/workflows', JSON.stringify(input));
+      return res.data;
+    },
+    { onSuccess: console.log }
   );
 
   const { mutate: execute, isLoading } = useMutation(async () => _execute(), {

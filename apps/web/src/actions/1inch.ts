@@ -29,10 +29,9 @@ export const getCallData = async (): Promise<Hex> => {
   // const value = 0n;
   // const data = '0x68656c6c6f';
 
-  const to = '0xa26fd1dfe9ee86698e95f59b53af1fef608f53a2'; // vitalik
+  const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'; // vitalik
   const value = 0n;
-  const data =
-    '0x40c10f19000000000000000000000000301933aef6bb308f090087e9075ed5bfcbd3e0b3000000000000000000000000000000000000000000000000016345785d8a0000'; // "hello" encoded to utf-8 bytes
+  const data = '0x68656c6c6f'; // "hello" encoded to utf-8 bytes
 
   const callData = encodeFunctionData({
     abi: [
@@ -42,7 +41,7 @@ export const getCallData = async (): Promise<Hex> => {
           { name: 'value', type: 'uint256' },
           { name: 'func', type: 'bytes' },
         ],
-        name: 'execut',
+        name: 'execute',
         outputs: [],
         stateMutability: 'nonpayable',
         type: 'function',
@@ -57,7 +56,7 @@ export const execute = async (
   workflowStep: z.infer<typeof workflowStepSchema>
 ) => {
   console.log('WORKFLOW:::', workflowStep.tx_sign_data);
-  const result = await executeTransaction(59140, workflowStep.tx_sign_data!);
+  const result = await executeTransaction(84531, workflowStep.tx_sign_data!);
 
   return result;
 };
@@ -68,7 +67,6 @@ const buildTransactions = async ({ chain }) => {
   const broadcastApiUrl =
     'https://tx-gateway.1inch.io/v1.1/' + chainId + '/broadcast';
   const apiBaseUrl = 'https://api.1inch.io/v5.0/' + chainId;
-  const web3 = new Web3(web3RpcUrl);
 
   function apiRequestUrl(methodName: string, queryParams: Record<any, any>) {
     return (
