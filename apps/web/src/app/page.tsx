@@ -3,7 +3,6 @@
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import { ChainSelector } from '../components/chain-selector';
 import { FlowBuilder } from '../components/flow-builder';
-import { TopupFlo } from '../components/top-up-flow';
 import { usepassKeyContext } from '../context/passkey-context';
 import { useAA } from '../context/permissionless-context';
 import { Avatar, AvatarImage } from './components/ui/avatar';
@@ -22,7 +21,6 @@ import { useEffect, useState } from 'react';
 import { useChain } from '../hooks/use-chain';
 
 export default function Page(): JSX.Element {
-  const aa = useAA();
   const {
     account,
     privateKeyId,

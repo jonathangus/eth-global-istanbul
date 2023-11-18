@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useState } from 'react';
-import { lineaTestnet } from 'viem/chains';
+import { goerli, lineaTestnet } from 'viem/chains';
 import { SUPPORTED_CHAINS } from '../config';
 
 interface UiContext {
@@ -11,7 +11,7 @@ interface UiContext {
 export const uiContext = createContext<UiContext>({} as UiContext);
 
 export function UiContextProvider({ children }) {
-  const [chainId, setChainId] = useState<SUPPORTED_CHAINS>(lineaTestnet.id);
+  const [chainId, setChainId] = useState<SUPPORTED_CHAINS>(goerli.id);
   const value = {
     chainId,
     setChainId,
