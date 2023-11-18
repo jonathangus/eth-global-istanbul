@@ -94,6 +94,8 @@ export const ActionItem = ({
   //   );
   // }
 
+  const selected = STEP_ACTIONS.find((x) => x.value === step.action.type);
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -104,12 +106,19 @@ export const ActionItem = ({
               role="combobox"
               className="justify-between"
             >
-              {step.action.type
-                ? STEP_ACTIONS.find(
-                    (framework) => framework.value === step.action.type
-                  )?.label
-                : "Select..."}
-              {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
+              {selected ? (
+                <span className="inline-flex items-center">
+                  <img
+                    height={24}
+                    width={24}
+                    src={selected.icon}
+                    className="mr-2"
+                  />
+                  {selected.label}
+                </span>
+              ) : (
+                "Select..."
+              )}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-0" align="start">
@@ -191,6 +200,9 @@ export const ActionItem = ({
             action={step.action}
             onChange={(action) => onChange({ ...step, action })}
           />
+        )}
+        {!step.action.type.includes("_") && (
+          <p className="text-center w-full text-gray-300">Loading</p>
         )}
       </CardContent>
     </Card>

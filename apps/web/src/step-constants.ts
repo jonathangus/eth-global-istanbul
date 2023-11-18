@@ -29,4 +29,19 @@ export const STEP_ACTIONS = [
     label: "Send tokens",
     icon: "https://i.imgur.com/kHBwLcW.png",
   },
+  {
+    value: "send-sms",
+    label: "SMS",
+    icon: "https://imgur.com/ruJpq58.png",
+  },
+  {
+    value: "push-protocol",
+    label: "Push Protocol",
+    icon: "https://app.push.org/static/media/PushBlocknativeLogo.04b115a4c0b42bef077b2bc69647b1e0.svg",
+  },
+  {
+    value: "aave",
+    label: "Stake on AAve",
+    icon: "https://imgur.com/kuqBTwj.png",
+  },
 ];
