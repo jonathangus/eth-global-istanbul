@@ -10,6 +10,7 @@ import {
 } from "../../database.schemas"
 import { TypeOf, z } from "zod"
 import { stepConfigSchema, workflowTriggerSchema } from "../../schemas"
+import { randomUUID } from "crypto"
 
 const Initialtrigger = {
   type: "TOKENS_RECEIVED",
@@ -46,6 +47,8 @@ export type Step = {
   workflow_id: number
 }
 
+let stepIdCounter = 1
+
 export function FlowBuilder() {
   const [trigger, setTrigger] = useState<Trigger | null>(null)
   const [steps, setSteps] = useState<Step[]>([])
@@ -55,18 +58,27 @@ export function FlowBuilder() {
   }
 
   const addStep = (newStep: Step) => {
-    setSteps([...steps, newStep])
+    const stepWithId = { ...newStep, id: stepIdCounter++ }
+    setSteps([...steps, stepWithId])
   }
 
   const onRemoveStep = (stepToRemove: Step) => {
-    setSteps(steps.filter((step) => step.id !== stepToRemove.id))
+    const updatedSteps = steps
+      .filter((step) => step.id !== stepToRemove.id)
+      .map((step, index) => ({ ...step, order: index + 1 }))
+
+    setSteps(updatedSteps)
   }
 
   const addChild = () => {
     if (!trigger) {
       addTrigger(Initialtrigger)
     } else {
-      addStep(InitialStep)
+      addStep({
+        ...InitialStep,
+        order: steps.length + 1,
+        workflow_id: 1,
+      })
     }
   }
 

@@ -42,7 +42,7 @@ export const ActionItem = ({
 
   return (
     <div
-      className="w-[600px] gap-4 pb-5 bg-gray-200 rounded-md shadow-md flex flex-col relative"
+      className="w-[600px] gap-4 bg-gray-200 rounded-md shadow-md flex flex-col relative"
       onMouseEnter={() => setisHovered(true)}
       onMouseLeave={() => setisHovered(false)}
     >
@@ -54,7 +54,7 @@ export const ActionItem = ({
           <TrashCanIcon />
         </div>
       )}
-      <div className="flex w-full rounded-t-md bg-white h-1/3 py-4">
+      <div className="flex w-full rounded-t-md bg-white h-full py-4">
         <TokenSelect
           value={step.config.type}
           onChange={handleDropdownChange}
