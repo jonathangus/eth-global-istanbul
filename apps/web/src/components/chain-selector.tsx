@@ -18,7 +18,7 @@ export function ChainSelector() {
     <Select
       onValueChange={(value) => setChainId(Number(value) as SUPPORTED_CHAINS)}
     >
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger>
         <SelectValue placeholder="Chain" />
       </SelectTrigger>
       <SelectContent>
