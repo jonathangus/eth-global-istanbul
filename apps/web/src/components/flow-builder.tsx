@@ -109,14 +109,12 @@ export function FlowBuilder() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="pt-3 pb-6">
-        <Input
-          value={workFlowName}
-          onChange={(e) => setWorkFlowName(e.target.value)}
-          placeholder="Workflow name"
-          className="text-2xl font-bold border-none text-center"
-        />
-      </div>
+      <Input
+        value={workFlowName}
+        onChange={(e) => setWorkFlowName(e.target.value)}
+        placeholder="Workflow name"
+        className="text-2xl w-full py-6 bg-white mb-4"
+      />
       {trigger && (
         <TriggerItem
           trigger={trigger}
@@ -157,7 +155,6 @@ export function FlowBuilder() {
         {trigger && (
           <Button
             variant="outline"
-            ref={addStepButtonRef}
             onClick={() =>
               addStep({
                 ...InitialStep,
@@ -182,7 +179,7 @@ export function FlowBuilder() {
         )}
 
         {trigger && steps.length > 0 && (
-          <Button onClick={deployFlow}>
+          <Button onClick={deployFlow} ref={addStepButtonRef}>
             {isSaving ? "Saving..." : "Deploy flow"}
           </Button>
         )}
