@@ -1,50 +1,50 @@
-import React, { useState } from "react"
-import { Trigger } from "./flow-builder"
-import { SelectActionDropDown } from "./select-action-dropdown"
-import { TokenSelect } from "./token-select"
-import clsx from "clsx"
-import { TrashCanIcon } from "./icons/trash-can-icon"
-import { set } from "zod"
+import React, { useState } from "react";
+import { Trigger } from "./flow-builder";
+import { SelectActionDropDown } from "./select-action-dropdown";
+import { TokenSelect } from "./token-select";
+import clsx from "clsx";
+import { TrashCanIcon } from "./icons/trash-can-icon";
+import { set } from "zod";
 
 type TriggerItemProps = {
-  trigger: Trigger
-  onChange: (trigger: Trigger) => void
-  onRemoveTrigger: () => void
-}
+  trigger: Trigger;
+  onChange: (trigger: Trigger) => void;
+  onRemoveTrigger: () => void;
+};
 
 export const TriggerItem = ({
   trigger,
   onChange,
   onRemoveTrigger,
 }: TriggerItemProps) => {
-  const [isHovered, setisHovered] = useState(false)
+  const [isHovered, setisHovered] = useState(false);
 
   const handleDropdownChange = (newValue: string) => {
-    onChange({ ...trigger, type: newValue })
-  }
+    onChange({ ...trigger, type: newValue });
+  };
 
   const handleTokenChange = (newValue: string) => {
-    onChange({ ...trigger, token: { ...trigger.token, name: newValue } })
-  }
+    onChange({ ...trigger, token: { ...trigger.token, name: newValue } });
+  };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange({
       ...trigger,
       token: { ...trigger.token, address: e.target.value },
-    })
-  }
+    });
+  };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange({
       ...trigger,
       token: { ...trigger.token, amount: parseInt(e.target.value) },
-    })
-  }
+    });
+  };
 
   const dropdownOptions = [
     { value: "TOKENS_RECEIVED", label: "on tokens received erc-20" },
     { value: "NFT_RECEIVED", label: "on tokens received erc-721" },
-  ]
+  ];
 
   const tokenOptions = [
     { value: "USDC", label: "usdc", image: "/icons/USDC.svg", address: "1234" },
@@ -55,11 +55,11 @@ export const TriggerItem = ({
       image: "/icons/APE.svg",
       address: "783947380",
     },
-  ]
+  ];
 
   return (
     <div
-      className="w-[600px] gap-4 pb-5 bg-gray-200 rounded-md shadow-md flex flex-col relative"
+      className="gap-4 pb-5 bg-gray-200 w-full rounded-md shadow-md flex flex-col relative"
       onMouseEnter={() => setisHovered(true)}
       onMouseLeave={() => setisHovered(false)}
     >
@@ -111,5 +111,5 @@ export const TriggerItem = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};

@@ -56,7 +56,7 @@ export default function Page(): JSX.Element {
           </Button>
         </DialogContent>
       </Dialog>
-      <div className="flex p-4">
+      <div className="p-4 space-y-8">
         {/* <aside className="w-72 fixed top-0 border-r border-r-gray-300 h-screen p-4">
           <div className="flex gap-2 items-center">
             <Avatar>
@@ -70,9 +70,11 @@ export default function Page(): JSX.Element {
           </div>
         </aside> */}
         {/* <main className="pl-80"> */}
-        <ChainSelector />
+        <div className="flex gap-4 w-full justify-stretch">
+          <ChainSelector />
+          <RegisterFlow />
+        </div>
         <FlowBuilder />
-        <RegisterFlow />
         {/* </main> */}
       </div>
     </>
