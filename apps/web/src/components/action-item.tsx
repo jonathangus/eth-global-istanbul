@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import { z } from "zod";
+import { ACTIONS, swapOn1InchConfigSchema } from "../../schemas";
+import { Card, CardContent, CardHeader } from "../app/components/ui/card";
+import { Input } from "../app/components/ui/input";
+import { Label } from "../app/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../app/components/ui/select";
+import { Separator } from "../app/components/ui/separator";
 import { Step, Trigger } from "./flow-builder";
-import { SelectActionDropDown } from "./select-action-dropdown";
-import { TokenSelect } from "./token-select";
-import clsx from "clsx";
-import { TrashCanIcon } from "./icons/trash-can-icon";
-import { set } from "zod";
-import Image from "next/image";
-import { ThinArrow } from "./icons/thin-arrow";
 
 type ActionItemProps = {
   trigger: Trigger | null;
@@ -42,67 +47,143 @@ export const ActionItem = ({
     },
   ];
 
-  let render: React.ReactNode = null;
-
-  if (step.action.type === "SEND_PUSH_PROTOCOL_NOTIFICATION") {
-    console.log("hello");
-    render = (
-      <div className="flex flex-col gap-4 p-4">
-        <input
-          className="w-full rounded-md bg-gray-100 px-4 py-2"
-          placeholder="Title"
-          value={step.action.title}
-          onChange={(e) =>
-            onChange({
-              ...step,
-              action: { ...step.action, title: e.target.value },
-            })
-          }
-        />
-        <input
-          className="w-full rounded-md bg-gray-100 px-4 py-2"
-          placeholder="Message"
-          value={step.action.message}
-          onChange={(e) =>
-            onChange({
-              ...step,
-              action: { ...step.action, message: e.target.value },
-            })
-          }
-        />
-      </div>
-    );
-  } else if (step.action.type === "SWAP_ONE_INCH") {
-    render = (
-      <div className="flex gap-4 p-4 justify-start items-center">
-        <div className="flex">
-          <p>swap to </p>
-        </div>
-        <div className="flex rotate-180">
-          <ThinArrow height={30} width={50} />
-        </div>
-
-        <div className="flex">
-          <TokenSelect
-            value={step.action.type}
-            onChange={handleDropdownChange}
-            options={tokenOptions}
-          />
-        </div>
-      </div>
-    );
-  }
+  // if (step.action.type === "SEND_PUSH_PROTOCOL_NOTIFICATION") {
+  //   console.log("hello");
+  //   render = (
+  //     <div className="flex flex-col gap-4 p-4">
+  //       <input
+  //         className="w-full rounded-md bg-gray-100 px-4 py-2"
+  //         placeholder="Title"
+  //         value={step.action.title}
+  //         onChange={(e) =>
+  //           onChange({
+  //             ...step,
+  //             action: { ...step.action, title: e.target.value },
+  //           })
+  //         }
+  //       />
+  //       <input
+  //         className="w-full rounded-md bg-gray-100 px-4 py-2"
+  //         placeholder="Message"
+  //         value={step.action.message}
+  //         onChange={(e) =>
+  //           onChange({
+  //             ...step,
+  //             action: { ...step.action, message: e.target.value },
+  //           })
+  //         }
+  //       />
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div className="gap-4 bg-gray-200 rounded-md shadow-md flex flex-col relative w-full">
-      <div className="flex w-full rounded-t-md bg-white h-1/3 py-4">
-        <TokenSelect
-          value={step.action.type}
-          onChange={handleDropdownChange}
-          options={tokenOptions}
-        />
-      </div>
-      <div className="h-2/3  bg-gray-200">{render}</div>
-    </div>
+    <Card className="w-full">
+      <CardHeader>
+        <Label className="space-y-2">
+          <span>Action</span>
+          <Select
+            value={step.action.type}
+            onValueChange={(value) => handleDropdownChange(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Chain" />
+            </SelectTrigger>
+            <SelectContent>
+              {[
+                { value: ACTIONS.SWAP_ON_1INCH, label: "Swap on 1inch" },
+                { value: "send-tokens", label: "Send tokens" },
+              ].map(({ value, label }) => (
+                <SelectItem value={value}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Label>
+      </CardHeader>
+      <Separator className="mb-4" />
+      <CardContent>
+        {step.action.type === "SWAP_ON_1INCH" && (
+          <SwapOn1InchForm
+            action={step.action}
+            onChange={(action) => onChange({ ...step, action })}
+          />
+        )}
+      </CardContent>
+    </Card>
   );
 };
+
+const TOKEN_OPTIONS = [
+  { value: "USDC", label: "usdc", image: "/icons/USDC.svg", address: "1234" },
+  { value: "GHO", label: "gho", image: "/icons/GHO.svg", address: "54321" },
+  {
+    value: "APE",
+    label: "ape",
+    image: "/icons/APE.svg",
+    address: "783947380",
+  },
+];
+function SwapOn1InchForm({
+  onChange,
+  action,
+}: {
+  onChange: (values: z.infer<typeof swapOn1InchConfigSchema>) => void;
+  action: z.infer<typeof swapOn1InchConfigSchema>;
+}) {
+  return (
+    <div className="flex flex-col gap-4">
+      <Label className="space-y-2">
+        <span>From</span>
+        <Select
+          value={action.fromToken.address}
+          onValueChange={(value) =>
+            onChange({ ...action, fromToken: { address: value } })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Trigger Type" />
+          </SelectTrigger>
+          <SelectContent>
+            {TOKEN_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Label>
+      <Label className="space-y-2">
+        <span>To</span>
+        <Select
+          value={action.toToken.address}
+          onValueChange={(value) =>
+            onChange({ ...action, toToken: { address: value } })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Trigger Type" />
+          </SelectTrigger>
+          <SelectContent>
+            {TOKEN_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Label>
+
+      <Label className="space-y-2">
+        <span>Amount</span>
+        <Input
+          placeholder="Enter Token Amount"
+          type="number"
+          value={action.amount}
+          onChange={(e) => {
+            onChange({ ...action, amount: Number(e.target.value) });
+          }}
+        />
+      </Label>
+    </div>
+  );
+}

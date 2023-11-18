@@ -17,8 +17,6 @@ export const TriggerItem = ({
   onChange,
   onRemoveTrigger,
 }: TriggerItemProps) => {
-  const [isHovered, setisHovered] = useState(false);
-
   const handleDropdownChange = (newValue: string) => {
     onChange({ ...trigger, type: newValue });
   };
@@ -58,19 +56,7 @@ export const TriggerItem = ({
   ];
 
   return (
-    <div
-      className="gap-4 pb-5 bg-gray-200 w-full rounded-md shadow-md flex flex-col relative"
-      onMouseEnter={() => setisHovered(true)}
-      onMouseLeave={() => setisHovered(false)}
-    >
-      {isHovered && (
-        <div
-          className="absolute top-0 right-0 translate-x-3 translate-y--6 rotate-[30deg] z-[999] cursor-pointer"
-          onClick={onRemoveTrigger}
-        >
-          <TrashCanIcon />
-        </div>
-      )}
+    <div className="gap-4 pb-5 bg-gray-200 w-full rounded-md shadow-md flex flex-col relative">
       <div className="flex w-full rounded-t-md bg-white h-1/3 py-4">
         {trigger.type === "TOKENS_RECEIVED" && (
           <div className="flex w-1/4">
