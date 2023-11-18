@@ -159,23 +159,11 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     register,
     isRegistering,
     account,
+    privateKeyId,
   };
 
   return (
-    <passKeyContext.Provider value={value}>
-      {isLoggingIn && <div>...is logging in ...</div>}
-      {isRegistering && <div> ... is registering ...</div>}
-      {!account && (
-        <>
-          {!privateKeyId && (
-            <button onClick={() => register()}>register</button>
-          )}
-          {privateKeyId && <button onClick={() => login()}>login </button>}
-        </>
-      )}
-
-      {children}
-    </passKeyContext.Provider>
+    <passKeyContext.Provider value={value}>{children}</passKeyContext.Provider>
   );
 }
 

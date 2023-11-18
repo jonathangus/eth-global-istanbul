@@ -55,6 +55,7 @@
     "ethers": "5",
     "framer-motion": "^10.16.5",
     "inngest": "^3.6.0",
+    "lucide-react": "^0.292.0",
     "next": "^13.4.19",
     "permissionless": "^0.0.12",
     "postcss": "^8.4.31",

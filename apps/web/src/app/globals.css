@@ -90,3 +90,8 @@
     stroke-dashoffset: 1000;
   }
 }
+
+iframe[src="https://onramp-sandbox.gatefi.com/"] {
+  width: 90vw !important;
+  height: 90vh !important;
+}

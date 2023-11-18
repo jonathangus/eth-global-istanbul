@@ -1,18 +1,31 @@
-'use client';
+"use client";
 
-import { baseGoerli, lineaTestnet } from 'viem/chains';
-import { useUIContext } from '../context/ui-context';
+import { baseGoerli, lineaTestnet } from "viem/chains";
+import { useUIContext } from "../context/ui-context";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../app/components/ui/select";
+import { SUPPORTED_CHAINS } from "../config";
 
 export function ChainSelector() {
-  const chains = [lineaTestnet, baseGoerli, lineaTestnet];
+  const chains = [lineaTestnet, baseGoerli];
   const { setChainId } = useUIContext();
   return (
-    <div>
-      <select onChange={(e) => setChainId(Number(e.target.value))}>
+    <Select
+      onValueChange={(value) => setChainId(Number(value) as SUPPORTED_CHAINS)}
+    >
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Chain" />
+      </SelectTrigger>
+      <SelectContent>
         {chains.map((chain) => (
-          <option value={chain.id}>{chain.name}</option>
+          <SelectItem value={chain.id.toString()}>{chain.name}</SelectItem>
         ))}
-      </select>
-    </div>
+      </SelectContent>
+    </Select>
   );
 }

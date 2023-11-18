@@ -265,11 +265,15 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     };
   };
 
+  const value = {
+    isLoading,
+  };
+
   return (
     <permissionlessContext.Provider value={value}>
-      <div onClick={() => execute()}>make tx</div>
+      {/* <div onClick={() => execute()}>make tx</div>
       {isLoading && <div>loading...</div>}
-      passkey: {account?.address}
+      passkey: {account?.address} */}
       {children}
     </permissionlessContext.Provider>
   );
