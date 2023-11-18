@@ -1,5 +1,5 @@
 ## 🍅 AA-tomato 🍅
-Demystifying account abstraction – Get ya wallet, all you need is a fingerprint and get access to true Account Abstraction ERC 437. Enables you to automate complex actions based on triggers and conditions in a safe way by remaining in custody.
+Demystifying account abstraction – Get ya wallet, all you need is a fingerprint and get access to true Account Abstraction ERC 4337. Enables you to automate complex actions based on triggers and conditions in a safe way by remaining in full control and custody.
 
 
 
