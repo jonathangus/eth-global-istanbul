@@ -18,11 +18,16 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const [workflow, steps] = await Promise.all([workflowPromise, stepsPromise]);
 
+  const trigger = workflowTriggerSchema.parse(workflow.data?.trigger!);
+
   return (
     <div className="max-w-md mx-auto py-4">
       <TopupFlo address={workflow.data?.address!} />
       <div className="flex justify-between items-center mt-4 mb-4">
         <h1 className="text-3xl">{workflow.data?.name}</h1>
+      </div>
+      <div>
+        {trigger.type === "TOKENS_RECEIVED_ERC20" && <p>runs on receive</p>}
       </div>
       <WorkflowSteps
         workflowId={Number(params.id)}

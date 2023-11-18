@@ -238,12 +238,14 @@ const TOKEN_OPTIONS = [
   },
 ];
 
-function SwapOn1InchForm({
+export function SwapOn1InchForm({
   onChange,
   action,
+  disabled = false,
 }: {
   onChange: (values: z.infer<typeof swapOn1InchConfigSchema>) => void;
   action: z.infer<typeof swapOn1InchConfigSchema>;
+  disabled?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -254,6 +256,7 @@ function SwapOn1InchForm({
           onValueChange={(value) =>
             onChange({ ...action, fromToken: { address: value } })
           }
+          disabled={disabled}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Trigger Type" />
@@ -274,6 +277,7 @@ function SwapOn1InchForm({
           onValueChange={(value) =>
             onChange({ ...action, toToken: { address: value } })
           }
+          disabled={disabled}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Trigger Type" />
@@ -297,13 +301,14 @@ function SwapOn1InchForm({
           onChange={(e) => {
             onChange({ ...action, amount: Number(e.target.value) });
           }}
+          disabled={disabled}
         />
       </Label>
     </div>
   );
 }
 
-function MintNftForm({
+export function MintNftForm({
   onChange,
   action,
 }: {
@@ -326,7 +331,7 @@ function MintNftForm({
   );
 }
 
-function SendERC721Form({
+export function SendERC721Form({
   onChange,
   action,
 }: {
