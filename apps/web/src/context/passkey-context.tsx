@@ -61,7 +61,6 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    console.log('create private key');
     const signedRequest = await passkeyHttpClient.stampCreatePrivateKeys({
       type: 'ACTIVITY_TYPE_CREATE_PRIVATE_KEYS_V2',
       organizationId,
