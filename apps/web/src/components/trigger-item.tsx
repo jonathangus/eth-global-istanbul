@@ -7,6 +7,7 @@ import { set } from "zod"
 import { z } from "zod"
 import {
   ACTIONS,
+  VALID_LOGIC_VALUES,
   swapOn1InchConfigSchema,
   tokenSchema,
   workflowTriggerSchema,
@@ -35,18 +36,47 @@ export const TriggerItem = ({ trigger, onChange }: TriggerItemProps) => {
       <CardHeader>
         <Label className="space-y-2">
           <span>On event</span>
-          <Select value={trigger.type}>
+          <Select
+            value={trigger.type}
+            onValueChange={(value) => onChange({ ...trigger, type: value })}
+          >
             <SelectTrigger>
               <SelectValue placeholder="event" />
             </SelectTrigger>
             <SelectContent>
               {[
                 {
-                  value: "TOKENS_RECEIVED",
+                  value: "TOKENS_RECEIVED_ERC20",
                   label: "on tokens received erc-20",
+                  image: "/icons/receive.png",
                 },
-              ].map(({ value, label }) => (
-                <SelectItem value={value}>{label}</SelectItem>
+                {
+                  value: "TOKENS_RECEIVED_ERC721",
+                  label: "on tokens received erc-721",
+                  image: "/icons/receive.png",
+                },
+                {
+                  value: "UNLIMITED_TOP_UP",
+                  label: "unlimited top up",
+                  image: "/icons/unlimit.svg",
+                },
+                {
+                  value: "TOKENS_LEAVE_ERC20",
+                  label: "on tokens leave erc-20",
+                  image: "/icons/send.png",
+                },
+                {
+                  value: "TOKENS_LEAVE_ERC721",
+                  label: "on tokens leave erc-721",
+                  image: "/icons/send.jpeg",
+                },
+              ].map(({ value, label, image }) => (
+                <SelectItem value={value}>
+                  <div className="flex items-center">
+                    <img src={image} alt="receive" className="w-6 h-6 mr-2" />
+                    <span>{label}</span>
+                  </div>
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -54,7 +84,7 @@ export const TriggerItem = ({ trigger, onChange }: TriggerItemProps) => {
       </CardHeader>
       <Separator className="mb-4" />
       <CardContent>
-        {trigger.type === "TOKENS_RECEIVED" && (
+        {trigger.type && (
           <OnTokensReceivedErc20
             token={trigger.token}
             onChange={(token) => onChange({ ...trigger, token })}
@@ -78,6 +108,12 @@ const TOKEN_OPTIONS = [
     label: "APE",
     image: "/icons/APE.svg",
     address: "783947380",
+  },
+  {
+    value: "ETH",
+    label: "ETH",
+    image: "/icons/ether.svg",
+    address: "0x7af963cF6D228E564e2A0aA0DdBF06210B38615D",
   },
   {
     value: "custom",
@@ -139,6 +175,31 @@ function OnTokensReceivedErc20({
           </SelectContent>
         </Select>
       </Label>
+      <Label className="space-y-2">
+        <span>Logic</span>
+        <Select
+          value={token.logic}
+          onValueChange={(value) =>
+            onChange({
+              ...token,
+              logic:
+                VALID_LOGIC_VALUES[value as keyof typeof VALID_LOGIC_VALUES],
+            })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Logic" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(VALID_LOGIC_VALUES).map((logicValue) => (
+              <SelectItem key={logicValue} value={logicValue}>
+                {logicValue}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Label>
+
       {token.name === "custom" && (
         <Label className="space-y-2">
           <span>address</span>
@@ -151,7 +212,7 @@ function OnTokensReceivedErc20({
         </Label>
       )}
       <Label className="space-y-2">
-        <span>amount</span>
+        <span>Amount</span>
         <Input
           placeholder="how many tokens"
           type="number"
