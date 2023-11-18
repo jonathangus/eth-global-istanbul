@@ -94,7 +94,7 @@ export function FlowBuilder() {
     setSteps(updatedSteps);
   };
 
-  const { account } = usepassKeyContext();
+  const { smartAccount } = usepassKeyContext();
   const { createWorkflow, isSaving, completedSteps } = useAA();
 
   const { chainId } = useChain();
@@ -102,7 +102,7 @@ export function FlowBuilder() {
   const deployFlow = async () => {
     console.log("deploy flow");
     createWorkflow({
-      address: account.address,
+      address: smartAccount,
       name: workFlowName,
       trigger: trigger,
       steps: steps,
