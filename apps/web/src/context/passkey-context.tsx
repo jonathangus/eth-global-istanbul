@@ -5,9 +5,10 @@ import { getWebAuthnAttestation, TurnkeyClient } from '@turnkey/http';
 import { createAccount } from '@turnkey/viem';
 import axios from 'axios';
 import { WebauthnStamper } from '@turnkey/webauthn-stamper';
-import { LocalAccount } from 'viem';
+import { LocalAccount, concat, encodeFunctionData } from 'viem';
 import { useChain } from '../hooks/use-chain';
 import { useMutation } from 'wagmi';
+import { getSenderAddress } from 'permissionless';
 
 const stampId =
   process.env.NODE_ENV === 'development'
@@ -40,7 +41,12 @@ export const passKeyContext = createContext<PassKeyContext>(
 );
 
 export function PassKeyContextProvider({ children }: PropsWithChildren) {
-  const { chainId, publicClient } = useChain();
+  const {
+    chainId,
+    publicClient,
+    ENTRY_POINT_ADDRESS,
+    SIMPLE_ACCOUNT_FACTORY_ADDRESS,
+  } = useChain();
   const [subOrgId, setSubOrgId] = useState<string | null>(null);
   const [privateKeyId, setPrivateKeyId] = useState<string | null>(null);
   const [account, setAccount] = useState<LocalAccount | null>();
@@ -49,11 +55,62 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     rpId: stampId,
   });
 
+  const [smartAccount, setSmartAccount] = useState();
+
   useEffect(() => {
     setAccount(null);
     setSubOrgId(localStorage.getItem(`subOrgId-${chainName}`));
     setPrivateKeyId(localStorage.getItem(`privateKeyId-${chainName}`));
   }, [chainId]);
+
+  const getAccountAddress = async () => {
+    const initCode = concat([
+      SIMPLE_ACCOUNT_FACTORY_ADDRESS,
+      encodeFunctionData({
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: 'owner',
+                type: 'address',
+              },
+              {
+                internalType: 'uint256',
+                name: 'salt',
+                type: 'uint256',
+              },
+            ],
+            name: 'createAccount',
+            outputs: [
+              {
+                internalType: 'contract SimpleAccount',
+                name: 'ret',
+                type: 'address',
+              },
+            ],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+        ],
+        args: [account.address, 0n],
+      }),
+    ]);
+    const senderAddress = await getSenderAddress(publicClient, {
+      initCode,
+      entryPoint: ENTRY_POINT_ADDRESS,
+    });
+
+    console.log('aa address:', senderAddress);
+
+    setSmartAccount(senderAddress);
+  };
+
+  useEffect(() => {
+    if (account) {
+      getAccountAddress();
+    }
+  }, [account?.address]);
 
   const passkeyHttpClient = new TurnkeyClient(
     {
@@ -175,6 +232,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     register,
     isRegistering,
     account,
+    smartAccount,
     privateKeyId,
   };
 
