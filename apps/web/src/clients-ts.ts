@@ -4,7 +4,7 @@ import {
   pimlicoPaymasterActions,
 } from 'permissionless/actions/pimlico';
 import { createClient, createPublicClient, http, Chain } from 'viem';
-import { lineaTestnet, baseGoerli, scrollSepolia } from 'viem/chains';
+import { lineaTestnet, baseGoerli, scrollSepolia, goerli } from 'viem/chains';
 import { SUPPORTED_CHAINS } from './config';
 
 const apiKey = process.env.NEXT_PUBLIC_YOUR_PIMLICO_API_KEY;
@@ -26,6 +26,7 @@ export const BUNDLER_CLIENT = {
     'scroll-sepolia-testnet',
     scrollSepolia
   ),
+  [goerli.id]: createBundlerClient('goerli', goerli),
 } satisfies Record<SUPPORTED_CHAINS, any>;
 
 const getPaymasterClient = (name: string, chain: Chain) =>
@@ -41,6 +42,8 @@ export const PAYMASTER_CLIENT = {
     scrollSepolia
   ),
   [baseGoerli.id]: getPaymasterClient('base-goerli', baseGoerli),
+
+  [goerli.id]: getPaymasterClient('goerli', goerli),
 } satisfies Record<SUPPORTED_CHAINS, any>;
 
 const getPublicClient = (rpc: string, chain: Chain) =>
@@ -62,4 +65,5 @@ export const PUBLIC_CLIENT = {
     baseGoerli.rpcUrls.default.http[0],
     baseGoerli
   ),
+  [goerli.id]: getPublicClient(goerli.rpcUrls.default.http[0], goerli),
 } satisfies Record<SUPPORTED_CHAINS, any>;
