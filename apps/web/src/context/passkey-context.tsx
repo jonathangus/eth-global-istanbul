@@ -1,13 +1,13 @@
-'use client';
-import { PropsWithChildren, useEffect } from 'react';
-import { createContext, useContext, useState } from 'react';
-import { getWebAuthnAttestation, TurnkeyClient } from '@turnkey/http';
-import { createAccount } from '@turnkey/viem';
-import axios from 'axios';
-import { WebauthnStamper } from '@turnkey/webauthn-stamper';
-import { LocalAccount } from 'viem';
-import { useChain } from '../hooks/use-chain';
-import { useMutation } from 'wagmi';
+"use client";
+import { PropsWithChildren, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
+import { getWebAuthnAttestation, TurnkeyClient } from "@turnkey/http";
+import { createAccount } from "@turnkey/viem";
+import axios from "axios";
+import { WebauthnStamper } from "@turnkey/webauthn-stamper";
+import { LocalAccount } from "viem";
+import { useChain } from "../hooks/use-chain";
+import { useMutation } from "wagmi";
 
 const generateRandomBuffer = (): ArrayBuffer => {
   const arr = new Uint8Array(32);
@@ -17,14 +17,14 @@ const generateRandomBuffer = (): ArrayBuffer => {
 
 const base64UrlEncode = (challenge: ArrayBuffer): string => {
   return Buffer.from(challenge)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
 };
 
 const humanReadableDateTime = (): string => {
-  return new Date().toLocaleString().replaceAll('/', '-').replaceAll(':', '.');
+  return new Date().toLocaleString().replaceAll("/", "-").replaceAll(":", ".");
 };
 
 interface PassKeyContext {}
@@ -40,7 +40,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
   const [account, setAccount] = useState<LocalAccount | null>();
 
   const stamper = new WebauthnStamper({
-    rpId: 'localhost',
+    rpId: "localhost",
   });
 
   useEffect(() => {
@@ -61,30 +61,30 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
       return;
     }
 
-    console.log('create private key');
+    console.log("create private key");
     const signedRequest = await passkeyHttpClient.stampCreatePrivateKeys({
-      type: 'ACTIVITY_TYPE_CREATE_PRIVATE_KEYS_V2',
+      type: "ACTIVITY_TYPE_CREATE_PRIVATE_KEYS_V2",
       organizationId,
       timestampMs: String(Date.now()),
       parameters: {
         privateKeys: [
           {
             privateKeyName: `ETH Key ${Math.floor(Math.random() * 1000)}`,
-            curve: 'CURVE_SECP256K1',
-            addressFormats: ['ADDRESS_FORMAT_ETHEREUM'],
+            curve: "CURVE_SECP256K1",
+            addressFormats: ["ADDRESS_FORMAT_ETHEREUM"],
             privateKeyTags: [],
           },
         ],
       },
     });
 
-    const response = await axios.post('/api/turnkey/create-key', signedRequest);
+    const response = await axios.post("/api/turnkey/create-key", signedRequest);
 
-    setPrivateKeyId(response.data['privateKeyId']);
+    setPrivateKeyId(response.data["privateKeyId"]);
 
     window.localStorage.setItem(
       `privateKeyId-${chainId}`,
-      response.data['privateKeyId']
+      response.data["privateKeyId"]
     );
   };
 
@@ -96,13 +96,13 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     const attestation = await getWebAuthnAttestation({
       publicKey: {
         rp: {
-          id: 'localhost',
-          name: 'Turnkey Viem Passkey Demo',
+          id: "localhost",
+          name: "Turnkey Viem Passkey Demo",
         },
         challenge,
         pubKeyCredParams: [
           {
-            type: 'public-key',
+            type: "public-key",
             // All algorithms can be found here: https://www.iana.org/assignments/cose/cose.xhtml#algorithms
             // Turnkey only supports ES256 at the moment.
             alg: -7,
@@ -115,7 +115,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
         },
       },
     });
-    const res = await axios.post('/api/turnkey/create-sub-org', {
+    const res = await axios.post("/api/turnkey/create-sub-org", {
       subOrgName: subOrgName,
       attestation,
       challenge: base64UrlEncode(challenge),
@@ -130,7 +130,7 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
 
   const _login = async () => {
     if (!privateKeyId || !subOrgId) {
-      return console.log({ privateKeyId, subOrgId }, 'missing');
+      return console.log({ privateKeyId, subOrgId }, "missing");
     }
     const { privateKey } = await passkeyHttpClient.getPrivateKey({
       organizationId: subOrgId,
@@ -160,23 +160,11 @@ export function PassKeyContextProvider({ children }: PropsWithChildren) {
     register,
     isRegistering,
     account,
+    privateKeyId,
   };
 
   return (
-    <passKeyContext.Provider value={value}>
-      {isLoggingIn && <div>...is logging in ...</div>}
-      {isRegistering && <div> ... is registering ...</div>}
-      {!account && (
-        <>
-          {!privateKeyId && (
-            <button onClick={() => register()}>register</button>
-          )}
-          {privateKeyId && <button onClick={() => login()}>login </button>}
-        </>
-      )}
-
-      {children}
-    </passKeyContext.Provider>
+    <passKeyContext.Provider value={value}>{children}</passKeyContext.Provider>
   );
 }
 

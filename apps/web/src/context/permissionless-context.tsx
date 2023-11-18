@@ -1,17 +1,17 @@
-'use client';
-import type { PropsWithChildren } from 'react';
-import { createContext, useContext } from 'react';
+"use client";
+import type { PropsWithChildren } from "react";
+import { createContext, useContext } from "react";
 import {
   UserOperation,
   getSenderAddress,
   signUserOperationHashWithECDSA,
-} from 'permissionless';
-import { Address, concat, encodeFunctionData, Hex } from 'viem';
-import { usepassKeyContext } from './passkey-context';
-import { abi as simpleAccountABI } from '../abi/simple-account';
+} from "permissionless";
+import { Address, concat, encodeFunctionData, Hex } from "viem";
+import { usepassKeyContext } from "./passkey-context";
+import { abi as simpleAccountABI } from "../abi/simple-account";
 
-import { useChain } from '../hooks/use-chain';
-import { useMutation } from 'wagmi';
+import { useChain } from "../hooks/use-chain";
+import { useMutation } from "wagmi";
 
 interface PermissionlessContext {}
 
@@ -26,12 +26,11 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     ENTRY_POINT_ADDRESS,
     chainId,
   } = useChain();
-  const value = {};
   const { mutate: execute, isLoading } = useMutation(async () => _execute());
   const { account } = usepassKeyContext();
   const _execute = async () => {
     if (!account) {
-      return console.warn('missing logged in');
+      return console.warn("missing logged in");
     }
 
     const owner = account;
@@ -43,26 +42,26 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
           {
             inputs: [
               {
-                internalType: 'address',
-                name: 'owner',
-                type: 'address',
+                internalType: "address",
+                name: "owner",
+                type: "address",
               },
               {
-                internalType: 'uint256',
-                name: 'salt',
-                type: 'uint256',
+                internalType: "uint256",
+                name: "salt",
+                type: "uint256",
               },
             ],
-            name: 'createAccount',
+            name: "createAccount",
             outputs: [
               {
-                internalType: 'contract SimpleAccount',
-                name: 'ret',
-                type: 'address',
+                internalType: "contract SimpleAccount",
+                name: "ret",
+                type: "address",
               },
             ],
-            stateMutability: 'nonpayable',
-            type: 'function',
+            stateMutability: "nonpayable",
+            type: "function",
           },
         ],
         args: [owner.address, 0n],
@@ -74,7 +73,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       entryPoint: ENTRY_POINT_ADDRESS,
     });
 
-    console.log('...senderAddress', senderAddress);
+    console.log("...senderAddress", senderAddress);
 
     let nonce = 0n;
     let accountExist;
@@ -82,29 +81,29 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       nonce = await publicClient.readContract({
         address: senderAddress,
         abi: simpleAccountABI,
-        functionName: 'getNonce',
+        functionName: "getNonce",
       });
       accountExist = true;
     } catch (e) {
       accountExist = false;
     }
 
-    const to = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+    const to = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
     const value = 0n;
-    const data = '0x68656c6c6f';
+    const data = "0x68656c6c6f";
 
     const callData = encodeFunctionData({
       abi: [
         {
           inputs: [
-            { name: 'dest', type: 'address' },
-            { name: 'value', type: 'uint256' },
-            { name: 'func', type: 'bytes' },
+            { name: "dest", type: "address" },
+            { name: "value", type: "uint256" },
+            { name: "func", type: "bytes" },
           ],
-          name: 'execute',
+          name: "execute",
           outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
+          stateMutability: "nonpayable",
+          type: "function",
         },
       ],
       args: [to, value, data],
@@ -115,13 +114,13 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     const userOperation = {
       sender: senderAddress,
       nonce: nonce,
-      initCode: accountExist ? '0x' : initCode,
+      initCode: accountExist ? "0x" : initCode,
       callData,
       maxFeePerGas: gasPrice.fast.maxFeePerGas,
       maxPriorityFeePerGas: gasPrice.fast.maxPriorityFeePerGas,
       // dummy signature, needs to be there so the SimpleAccount doesn't immediately revert because of invalid signature length
       signature:
-        '0xa15569dd8f8324dbeabf8073fdec36d4b754f53ce5901e283c6de79af177dc94557fa3c9922cd7af2a96ca94402d35c39f266925ee6407aeb32b31d76978d4ba1c' as Hex,
+        "0xa15569dd8f8324dbeabf8073fdec36d4b754f53ce5901e283c6de79af177dc94557fa3c9922cd7af2a96ca94402d35c39f266925ee6407aeb32b31d76978d4ba1c" as Hex,
     };
 
     const sponsorUserOperationResult =
@@ -139,7 +138,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     };
 
     console.log(
-      'Received paymaster sponsor result:',
+      "Received paymaster sponsor result:",
       sponsorUserOperationResult
     );
 
@@ -157,8 +156,8 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
       entryPoint: ENTRY_POINT_ADDRESS,
     });
 
-    console.log('___senderAddress', ___senderAddress);
-    console.log('copied to clipboard!');
+    console.log("___senderAddress", ___senderAddress);
+    console.log("copied to clipboard!");
     // TODO SAVE IN DB
     await navigator.clipboard.writeText(
       JSON.stringify({
@@ -173,7 +172,7 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
         to,
         data,
         callData,
-        initCode: accountExist ? '0x' : initCode,
+        initCode: accountExist ? "0x" : initCode,
         sender: senderAddress,
         signature,
         nonce: Number(userOperation.nonce),
@@ -181,11 +180,15 @@ export function PermissionlessContextProvider({ children }: PropsWithChildren) {
     );
   };
 
+  const value = {
+    isLoading,
+  };
+
   return (
     <permissionlessContext.Provider value={value}>
-      <div onClick={() => execute()}>make tx</div>
+      {/* <div onClick={() => execute()}>make tx</div>
       {isLoading && <div>loading...</div>}
-      passkey: {account?.address}
+      passkey: {account?.address} */}
       {children}
     </permissionlessContext.Provider>
   );

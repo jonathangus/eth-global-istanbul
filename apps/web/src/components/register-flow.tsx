@@ -27,7 +27,9 @@ export function RegisterFlow() {
 
   return (
     <div>
-      <Button id="gatefi-button">Topup with Unlimit</Button>
+      <Button id="gatefi-button" variant="outline">
+        Topup with Unlimit
+      </Button>
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { abi as PaymasterABI } from '../abi/paymaster';
-import { useChain } from '../hooks/use-chain';
+import { abi as PaymasterABI } from "../abi/paymaster";
+import { useChain } from "../hooks/use-chain";
 
 export function PaymasterContextProvider({ children }) {
   const { paymasterClient } = useChain();
@@ -14,7 +14,7 @@ export function PaymasterContextProvider({ children }) {
 
   return (
     <>
-      <button onClick={() => testIt()}>test paymaster</button>
+      {/* <button onClick={() => testIt()}>test paymaster</button> */}
       {children}
     </>
   );
