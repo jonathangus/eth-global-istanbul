@@ -13,6 +13,22 @@ import {
 import { Separator } from "../app/components/ui/separator";
 import { Step, Trigger } from "./flow-builder";
 
+import {
+  Command,
+  CommandInput,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "../app/components/ui/command";
+import { cn } from "../lib/utils";
+import { Button } from "../app/components/ui/button";
+import { CheckIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../app/components/ui/popover";
+
 type ActionItemProps = {
   trigger: Trigger | null;
   step: Step;
@@ -77,11 +93,60 @@ export const ActionItem = ({
   //   );
   // }
 
+  const STEP_TYPES = [
+    { value: ACTIONS.SWAP_ON_1INCH, label: "Swap on 1inch" },
+    { value: "send-tokens", label: "Send tokens" },
+  ];
+
   return (
     <Card className="w-full">
       <CardHeader>
-        <Label className="space-y-2">
-          <span>Action</span>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              className="justify-between"
+            >
+              {step.action.type
+                ? STEP_TYPES.find(
+                    (framework) => framework.value === step.action.type
+                  )?.label
+                : "Select..."}
+              {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Search..." />
+              <CommandEmpty>Nothing found</CommandEmpty>
+              <CommandGroup heading="Actions">
+                {STEP_TYPES.map((x) => (
+                  <CommandItem
+                    key={x.value}
+                    value={x.value}
+                    onSelect={(currentValue) => {
+                      handleDropdownChange(x.value);
+                    }}
+                  >
+                    <CheckIcon
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        step.action.type === x.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                    {x.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              {/* TOOD: fill in */}
+              <CommandGroup heading="Conditions"></CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        {/* <Label className="space-y-2">
           <Select
             value={step.action.type}
             onValueChange={(value) => handleDropdownChange(value)}
@@ -98,7 +163,7 @@ export const ActionItem = ({
               ))}
             </SelectContent>
           </Select>
-        </Label>
+        </Label> */}
       </CardHeader>
       <Separator className="mb-4" />
       <CardContent>
