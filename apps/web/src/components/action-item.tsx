@@ -28,6 +28,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../app/components/ui/popover";
+import { STEP_ACTIONS, STEP_CONDITIONS } from "../step-constants";
+import Image from "next/image";
 
 type ActionItemProps = {
   step: Step;
@@ -92,10 +94,7 @@ export const ActionItem = ({
   //   );
   // }
 
-  const STEP_TYPES = [
-    { value: ACTIONS.SWAP_ON_1INCH, label: "Swap on 1inch" },
-    { value: "send-tokens", label: "Send tokens" },
-  ];
+  const selected = STEP_ACTIONS.find((x) => x.value === step.action.type);
 
   return (
     <Card className="w-full">
@@ -107,12 +106,19 @@ export const ActionItem = ({
               role="combobox"
               className="justify-between"
             >
-              {step.action.type
-                ? STEP_TYPES.find(
-                    (framework) => framework.value === step.action.type
-                  )?.label
-                : "Select..."}
-              {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
+              {selected ? (
+                <span className="inline-flex items-center">
+                  <img
+                    height={24}
+                    width={24}
+                    src={selected.icon}
+                    className="mr-2"
+                  />
+                  {selected.label}
+                </span>
+              ) : (
+                "Select..."
+              )}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-0" align="start">
@@ -120,28 +126,51 @@ export const ActionItem = ({
               <CommandInput placeholder="Search..." />
               <CommandEmpty>Nothing found</CommandEmpty>
               <CommandGroup heading="Actions">
-                {STEP_TYPES.map((x) => (
+                {STEP_ACTIONS.map((x) => (
                   <CommandItem
                     key={x.value}
                     value={x.value}
                     onSelect={(currentValue) => {
                       handleDropdownChange(x.value);
                     }}
+                    className={cn(
+                      step.action.type === x.value && "bg-slate-50"
+                    )}
                   >
-                    <CheckIcon
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        step.action.type === x.value
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
+                    <img
+                      width={24}
+                      height={24}
+                      src={x.icon}
+                      alt={x.label}
+                      className="mr-2"
                     />
                     {x.label}
                   </CommandItem>
                 ))}
               </CommandGroup>
-              {/* TOOD: fill in */}
-              <CommandGroup heading="Conditions"></CommandGroup>
+              <CommandGroup heading="Conditions">
+                {STEP_CONDITIONS.map((x) => (
+                  <CommandItem
+                    key={x.value}
+                    value={x.value}
+                    onSelect={(currentValue) => {
+                      handleDropdownChange(x.value);
+                    }}
+                    className={cn(
+                      step.action.type === x.value && "bg-slate-50"
+                    )}
+                  >
+                    <img
+                      width={24}
+                      height={24}
+                      src={x.icon}
+                      alt={x.label}
+                      className="mr-2"
+                    />
+                    {x.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
             </Command>
           </PopoverContent>
         </Popover>
@@ -171,6 +200,9 @@ export const ActionItem = ({
             action={step.action}
             onChange={(action) => onChange({ ...step, action })}
           />
+        )}
+        {!step.action.type.includes("_") && (
+          <p className="text-center w-full text-gray-300">Loading</p>
         )}
       </CardContent>
     </Card>
