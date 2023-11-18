@@ -82,7 +82,7 @@ export function FlowBuilder() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center">
       {trigger && (
         <TriggerItem
           trigger={trigger}
@@ -93,7 +93,10 @@ export function FlowBuilder() {
 
       {steps.map((step: any) => (
         <>
-          <DownArrow />
+          <div className="h-24 relative">
+            <DownArrow />
+            <div className="w-[2px] h-full  bg-gray-300" />
+          </div>
           <ActionItem
             trigger={trigger}
             key={step.id}
