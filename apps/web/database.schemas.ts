@@ -14,6 +14,36 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
     .nullable()
 );
 
+export const stepRunsRowSchema = z.object({
+  created_at: z.string(),
+  id: z.number(),
+  input: jsonSchema.nullable(),
+  output: jsonSchema.nullable(),
+  status: z.string().nullable(),
+  step_id: z.number(),
+  workflow_id: z.number().nullable(),
+});
+
+export const stepRunsInsertSchema = z.object({
+  created_at: z.string().optional(),
+  id: z.number().optional(),
+  input: jsonSchema.optional().nullable(),
+  output: jsonSchema.optional().nullable(),
+  status: z.string().optional().nullable(),
+  step_id: z.number(),
+  workflow_id: z.number().optional().nullable(),
+});
+
+export const stepRunsUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  id: z.number().optional(),
+  input: jsonSchema.optional().nullable(),
+  output: jsonSchema.optional().nullable(),
+  status: z.string().optional().nullable(),
+  step_id: z.number().optional(),
+  workflow_id: z.number().optional().nullable(),
+});
+
 export const stepsRowSchema = z.object({
   action: jsonSchema,
   created_at: z.string(),

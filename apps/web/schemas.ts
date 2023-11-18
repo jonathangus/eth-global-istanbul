@@ -64,3 +64,9 @@ export const workflowStepSchema = stepsRowSchema.extend({
   tx_sign_data: stepTxSignDataSchema.nullable(),
   action: stepActionConfig,
 });
+
+export const STEP_RUN_STATUS = {
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  COMPLETED: "COMPLETED",
+} as const;
