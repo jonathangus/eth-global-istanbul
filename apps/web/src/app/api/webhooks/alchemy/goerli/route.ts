@@ -7,7 +7,7 @@ import { goerli } from "viem/chains";
 
 const rawContractSchema = z.object({
   rawValue: z.string(),
-  address: z.string(),
+  address: z.string().optional(),
   decimals: z.number(),
 });
 
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       token: {
         name: activity.asset.toLowerCase(),
         amount: activity.value,
-        address: activity.rawContract.address.toLowerCase(),
+        address: activity.rawContract.address?.toLowerCase() ?? "",
       },
     };
   });
