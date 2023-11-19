@@ -39,7 +39,13 @@ export const TriggerItem = ({ trigger, onChange }: TriggerItemProps) => {
           <span>On event</span>
           <Select
             value={trigger.type}
-            onValueChange={(value) => onChange({ ...trigger, type: value })}
+            onValueChange={(
+              value:
+                | "TOKENS_RECEIVED_ERC20"
+                | "TOKENS_RECEIVED_ERC721"
+                | "TOKENS_LEAVE_ERC20"
+                | "TOKENS_LEAVE_ERC721"
+            ) => onChange({ ...trigger, type: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="event" />
@@ -137,8 +143,9 @@ function OnTokensReceivedErc20({
     )
 
     onChange({
+      ...token,
       name: value,
-      address: selectedTokenObj ? selectedTokenObj.address : "",
+      address: selectedTokenObj ? selectedTokenObj.address : "0x",
     })
   }
 
@@ -147,6 +154,14 @@ function OnTokensReceivedErc20({
       ...token,
       address: e.target.value,
     })
+  }
+
+  const handleAmountChange = (e) => {
+    let value = e.target.value
+    value = value.replace(/,/g, ".")
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      onChange({ ...token, amount: value === "" ? null : value })
+    }
   }
 
   return (
@@ -177,30 +192,6 @@ function OnTokensReceivedErc20({
           </SelectContent>
         </Select>
       </Label>
-      <Label className="space-y-2">
-        <span>Logic</span>
-        <Select
-          value={token.logic}
-          onValueChange={(value) =>
-            onChange({
-              ...token,
-              logic:
-                VALID_LOGIC_VALUES[value as keyof typeof VALID_LOGIC_VALUES],
-            })
-          }
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Logic" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.values(VALID_LOGIC_VALUES).map((logicValue) => (
-              <SelectItem key={logicValue} value={logicValue}>
-                {logicValue}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Label>
 
       {token.name === "custom" && (
         <Label className="space-y-2">
@@ -217,12 +208,21 @@ function OnTokensReceivedErc20({
         <span>Amount</span>
         <Input
           placeholder="how many tokens"
+          type="text"
+          inputMode="decimal"
+          pattern="[0-9.,]*"
+          value={token.amount || ""}
+          onChange={handleAmountChange}
+        />
+        {/* <Input
+          placeholder="how many tokens"
           type="number"
-          value={token.amount || 0}
+          inputMode="decimal"
+          value={token.amount}
           onChange={(e) => {
             onChange({ ...token, amount: Number(e.target.value) })
           }}
-        />
+        /> */}
       </Label>
     </div>
   )

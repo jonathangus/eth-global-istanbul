@@ -1,32 +1,33 @@
-"use client";
+"use client"
 
-import { useRef, useState } from "react";
-import { z } from "zod";
+import { useRef, useState } from "react"
+import { z } from "zod"
 import {
   ACTIONS,
   VALID_LOGIC_VALUES,
+  tokensReceivedERC20TriggerSchema,
   workflowStepSchema,
   workflowTriggerSchema,
-} from "../../schemas";
-import { ActionItem } from "./action-item";
-import { DownArrow } from "./icons/down-arrow";
-import { TriggerItem } from "./trigger-item";
-import { useRouter } from "next/navigation";
-import { Button } from "../app/components/ui/button";
-import { useAA } from "../context/permissionless-context";
-import { usepassKeyContext } from "../context/passkey-context";
-import { useChain } from "../hooks/use-chain";
-import { Input } from "../app/components/ui/input";
+} from "../../schemas"
+import { ActionItem } from "./action-item"
+import { DownArrow } from "./icons/down-arrow"
+import { TriggerItem } from "./trigger-item"
+import { useRouter } from "next/navigation"
+import { Button } from "../app/components/ui/button"
+import { useAA } from "../context/permissionless-context"
+import { usepassKeyContext } from "../context/passkey-context"
+import { useChain } from "../hooks/use-chain"
+import { Input } from "../app/components/ui/input"
 
-const Initialtrigger = {
+const Initialtrigger: Trigger = {
   type: "TOKENS_RECEIVED_ERC20",
   token: {
-    name: "USDC",
-    address: "0x12323243412328",
-    amount: 10,
+    name: "ETH",
+    address: "0x7af963cF6D228E564e2A0aA0DdBF06210B38615D",
+    amount: 0.2,
     logic: VALID_LOGIC_VALUES.GREATER_THAN,
   },
-};
+}
 
 const InitialStep = {
   config: {
@@ -39,12 +40,12 @@ const InitialStep = {
   order: 1,
   type: "action",
   workflow_id: 1,
-};
+}
 
-export type Trigger = z.infer<typeof workflowTriggerSchema>;
-export type Step = z.infer<typeof workflowStepSchema>;
+export type Trigger = z.infer<typeof workflowTriggerSchema>
+export type Step = z.infer<typeof workflowStepSchema>
 
-let stepIdCounter = 1;
+let stepIdCounter = 1
 
 const tomatoNames = [
   "Tommy Tomato",
@@ -52,63 +53,75 @@ const tomatoNames = [
   "Saucy Tomato",
   "Tomato Tango",
   "Sweet Tomato",
-];
+]
 
 function getRandomTomatoName(): string {
-  const defaultName = "Default Tomato";
+  const defaultName = "Default Tomato"
   if (tomatoNames.length === 0) {
-    return defaultName;
+    return defaultName
   }
-  const randomIndex = Math.floor(Math.random() * tomatoNames.length);
-  return tomatoNames[randomIndex] || defaultName;
+  const randomIndex = Math.floor(Math.random() * tomatoNames.length)
+  return tomatoNames[randomIndex] || defaultName
 }
 
 export function FlowBuilder() {
-  const [trigger, setTrigger] = useState<Trigger | null>(null);
-  const [steps, setSteps] = useState<Step[]>([]);
+  const [trigger, setTrigger] = useState<Trigger | null>(null)
+  const [steps, setSteps] = useState<Step[]>([])
   const [workFlowName, setWorkFlowName] = useState<string>(
     getRandomTomatoName()
-  );
+  )
 
-  const addStepButtonRef = useRef<HTMLButtonElement>(null);
+  const addStepButtonRef = useRef<HTMLButtonElement>(null)
 
   const addTrigger = (newTrigger: Trigger) => {
-    setTrigger(newTrigger);
-  };
+    setTrigger(newTrigger)
+  }
 
   const addStep = async (newStep: Step) => {
-    const stepWithId = { ...newStep, id: stepIdCounter++ };
-    setSteps([...steps, stepWithId]);
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    const stepWithId = { ...newStep, id: stepIdCounter++ }
+    setSteps([...steps, stepWithId])
+    await new Promise((resolve) => setTimeout(resolve, 100))
     addStepButtonRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "end",
-    });
-  };
+    })
+  }
 
   const onRemoveStep = (stepToRemove: Step) => {
     const updatedSteps = steps
       .filter((step) => step.id !== stepToRemove.id)
-      .map((step, index) => ({ ...step, order: index + 1 }));
+      .map((step, index) => ({ ...step, order: index + 1 }))
 
-    setSteps(updatedSteps);
-  };
+    setSteps(updatedSteps)
+  }
 
-  const { smartAccount } = usepassKeyContext();
-  const { createWorkflow, isSaving, completedSteps } = useAA();
+  const { smartAccount } = usepassKeyContext()
+  const { createWorkflow, isSaving, completedSteps } = useAA()
 
-  const { chainId } = useChain();
+  const { chainId } = useChain()
 
   const deployFlow = async () => {
-    console.log("deploy flow");
-    createWorkflow({
-      address: smartAccount,
-      name: workFlowName,
-      trigger: trigger,
-      steps: steps,
-      chain_id: chainId,
-    });
-  };
+    try {
+      const parsedTrigger = tokensReceivedERC20TriggerSchema.parse({
+        ...trigger,
+        token: {
+          ...trigger.token,
+          amount: parseFloat(trigger.token.amount),
+        },
+      })
+      console.log("deploy flow")
+      createWorkflow({
+        address: smartAccount,
+        name: workFlowName,
+        trigger: parsedTrigger,
+        steps: steps,
+        chain_id: chainId,
+      })
+    } catch (error) {
+      // Handle validation error (e.g., show an error message)
+      console.error("Validation error:", error)
+    }
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -139,11 +152,11 @@ export function FlowBuilder() {
             onChange={(updatedStep: Step) => {
               const updatedSteps = steps.map((s) => {
                 if (s.id === updatedStep.id) {
-                  return updatedStep;
+                  return updatedStep
                 }
-                return s;
-              });
-              setSteps(updatedSteps);
+                return s
+              })
+              setSteps(updatedSteps)
             }}
           />
         </>
@@ -187,5 +200,5 @@ export function FlowBuilder() {
         )}
       </div>
     </div>
-  );
+  )
 }
