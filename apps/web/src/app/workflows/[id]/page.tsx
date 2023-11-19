@@ -12,6 +12,12 @@ const tokenOptions = [
     image: "/icons/ape.svg",
     address: "783947380",
   },
+  {
+    value: "ETH",
+    label: "ETH",
+    image: "/icons/ether.svg",
+    address: "0x7af963cF6D228E564e2A0aA0DdBF06210B38615D",
+  },
 ]
 
 export default async function Page({ params }: { params: { id: string } }) {
