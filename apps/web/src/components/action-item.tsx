@@ -235,13 +235,19 @@ export const ActionItem = ({
 }
 
 const TOKEN_OPTIONS = [
-  { value: "USDC", label: "usdc", image: "/icons/usdc.svg", address: "1234" },
-  { value: "GHO", label: "gho", image: "/icons/gho.svg", address: "54321" },
+  { value: "USDC", label: "USDC", image: "/icons/usdc.svg", address: "1234" },
+  { value: "GHO", label: "GHO", image: "/icons/gho.svg", address: "54321" },
   {
     value: "APE",
-    label: "ape",
+    label: "APE",
     image: "/icons/ape.svg",
     address: "783947380",
+  },
+  {
+    value: "ETH",
+    label: "ETH",
+    image: "/icons/ether.svg",
+    address: "0x7af963cF6D228E564e2A0aA0DdBF06210B38615D",
   },
 ]
 

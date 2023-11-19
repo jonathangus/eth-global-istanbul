@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const token = tokenOptions.find((t) => t.value === trigger.token.name)
 
   return (
-    <div className="max-w-md mx-auto py-4">
+    <div className="max-w-md mx-auto py-4 px-8">
       <TopupFlo address={workflow.data?.address!} />
       <div className="flex justify-between items-center mt-4 mb-2">
         <h1 className="text-3xl">{workflow.data?.name}</h1>
