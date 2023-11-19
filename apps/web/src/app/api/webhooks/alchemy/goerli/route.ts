@@ -5,18 +5,6 @@ import { z } from "zod";
 import { inngest } from "../../../../../lib/inngest";
 import { goerli } from "viem/chains";
 
-const logSchema = z.object({
-  removed: z.boolean(),
-  address: z.string(),
-  data: z.string(),
-  topics: z.array(z.string()),
-  blockNumber: z.string(),
-  transactionHash: z.string(),
-  transactionIndex: z.string(),
-  blockHash: z.string(),
-  logIndex: z.string(),
-});
-
 const rawContractSchema = z.object({
   rawValue: z.string(),
   address: z.string(),
@@ -35,7 +23,6 @@ const activitySchema = z.object({
   hash: z.string(),
   typeTraceAddress: z.string().nullable().optional(),
   rawContract: rawContractSchema,
-  log: logSchema,
 });
 
 const eventSchema = z.object({
