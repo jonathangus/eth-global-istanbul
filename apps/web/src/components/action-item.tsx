@@ -277,7 +277,18 @@ export function SwapOn1InchForm({
           <SelectContent>
             {TOKEN_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>
-                {option.label}
+                <div className="flex items-center">
+                  {option.value === "custom" ? (
+                    <div className="w-6 h-6 mr-2" />
+                  ) : (
+                    <img
+                      src={option.image}
+                      alt={option.value}
+                      className="w-6 h-6 mr-2"
+                    />
+                  )}
+                  <span>{option.label}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
@@ -298,7 +309,18 @@ export function SwapOn1InchForm({
           <SelectContent>
             {TOKEN_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>
-                {option.label}
+                <div className="flex items-center">
+                  {option.value === "custom" ? (
+                    <div className="w-6 h-6 mr-2" />
+                  ) : (
+                    <img
+                      src={option.image}
+                      alt={option.value}
+                      className="w-6 h-6 mr-2"
+                    />
+                  )}
+                  <span>{option.label}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
